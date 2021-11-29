@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ResponsibleCommands\**" />
+    <EmbeddedResource Remove="ResponsibleCommands\**" />
+    <None Remove="ResponsibleCommands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="10.3.4" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+    <PackageReference Include="ServiceResult" Version="1.0.1" />
+    <PackageReference Include="System.Text.Json" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Equinor.Lighthouse.Api.BlobStorage\Equinor.Lighthouse.Api.BlobStorage.csproj" />
+    <ProjectReference Include="..\Equinor.Lighthouse.Api.Domain\Equinor.Lighthouse.Api.Domain.csproj" />
+    <ProjectReference Include="..\Equinor.Lighthouse.Api.MainApi\Equinor.Lighthouse.Api.MainApi.csproj" />
+  </ItemGroup>
+
+</Project>
