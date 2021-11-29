@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Lighthouse.Api.Query;
 using Equinor.Lighthouse.Api.Query.WorkOrders;
-using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Equinor.Lighthouse.Api.WebApi.Controllers.WorkOrders;
@@ -12,6 +12,7 @@ namespace Equinor.Lighthouse.Api.WebApi.Controllers.WorkOrders;
 public class WorkOrdersController : ApiControllerBase
 {
     // GET: <WorkOrdersController>
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<PaginatedList<WorkOrderDto>>> Get([FromQuery] GetWorkOrdersQuery query)
     {

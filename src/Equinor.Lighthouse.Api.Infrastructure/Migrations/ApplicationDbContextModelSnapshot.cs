@@ -294,6 +294,9 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.ToTable("Activities");
                 });
 
@@ -345,6 +348,9 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
                     b.Property<string>("PipeTest")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Plant")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double?>("RemainingHours")
                         .HasColumnType("float");
 
@@ -373,6 +379,9 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.ToTable("LciObjects");
                 });
@@ -417,6 +426,9 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.ToTable("WorkOrders");
                 });
