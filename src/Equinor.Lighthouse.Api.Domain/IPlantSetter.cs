@@ -1,9 +1,8 @@
-﻿namespace Equinor.Lighthouse.Api.Domain
+﻿namespace Equinor.Lighthouse.Api.Domain;
+
+public interface IPlantSetter
 {
-    public interface IPlantSetter
-    {
-        void SetPlant(string plant);
-        void SetCrossPlantQuery();
-        void ClearCrossPlantQuery();
-    }
+    void SetPlant(string plant);
+    void SetCrossPlantQuery();
+    void ClearCrossPlantQuery();
 }

@@ -2,10 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.Domain.Events
+namespace Equinor.Lighthouse.Api.Domain.Events;
+
+public interface IEventDispatcher
 {
-    public interface IEventDispatcher
-    {
-        Task DispatchAsync(IEnumerable<EntityBase> entities, CancellationToken cancellationToken = default);
-    }
+    Task DispatchAsync(IEnumerable<EntityBase> entities, CancellationToken cancellationToken = default);
 }

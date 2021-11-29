@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.MainApi.Project
+namespace Equinor.Lighthouse.Api.MainApi.Project;
+
+public interface IProjectApiService
 {
-    public interface IProjectApiService
-    {
-        Task<PCSProject> TryGetProjectAsync(string plant, string name);
-    }
+    Task<PCSProject> TryGetProjectAsync(string plant, string name);
 }

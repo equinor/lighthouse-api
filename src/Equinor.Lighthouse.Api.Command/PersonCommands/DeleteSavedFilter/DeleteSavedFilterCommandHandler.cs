@@ -6,36 +6,35 @@ using Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Lighthouse.Api.Command.PersonCommands.DeleteSavedFilter
+namespace Equinor.Lighthouse.Api.Command.PersonCommands.DeleteSavedFilter;
+
+public class DeleteSavedFilterCommandHandler : IRequestHandler<DeleteSavedFilterCommand, Result<Unit>>
 {
-    public class DeleteSavedFilterCommandHandler : IRequestHandler<DeleteSavedFilterCommand, Result<Unit>>
+    private readonly IPersonRepository _personRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ICurrentUserProvider _currentUserProvider;
+
+    public DeleteSavedFilterCommandHandler(
+        IPersonRepository personRepository,
+        IUnitOfWork unitOfWork,
+        ICurrentUserProvider currentUserProvider)
     {
-        private readonly IPersonRepository _personRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ICurrentUserProvider _currentUserProvider;
+        _personRepository = personRepository;
+        _unitOfWork = unitOfWork;
+        _currentUserProvider = currentUserProvider;
+    }
 
-        public DeleteSavedFilterCommandHandler(
-            IPersonRepository personRepository,
-            IUnitOfWork unitOfWork,
-            ICurrentUserProvider currentUserProvider)
-        {
-            _personRepository = personRepository;
-            _unitOfWork = unitOfWork;
-            _currentUserProvider = currentUserProvider;
-        }
+    public async Task<Result<Unit>> Handle(DeleteSavedFilterCommand request, CancellationToken cancellationToken)
+    {
+        var currentUserOid = _currentUserProvider.GetCurrentUserOid();
+        var person = await _personRepository.GetWithSavedFiltersByOidAsync(currentUserOid);
+        var savedFilter = person.SavedFilters.Single(sf => sf.Id == request.SavedFilterId);
 
-        public async Task<Result<Unit>> Handle(DeleteSavedFilterCommand request, CancellationToken cancellationToken)
-        {
-            var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var person = await _personRepository.GetWithSavedFiltersByOidAsync(currentUserOid);
-            var savedFilter = person.SavedFilters.Single(sf => sf.Id == request.SavedFilterId);
+        savedFilter.SetRowVersion(request.RowVersion);
+        person.RemoveSavedFilter(savedFilter);
+        _personRepository.RemoveSavedFilter(savedFilter);
 
-            savedFilter.SetRowVersion(request.RowVersion);
-            person.RemoveSavedFilter(savedFilter);
-            _personRepository.RemoveSavedFilter(savedFilter);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return new SuccessResult<Unit>(Unit.Value);
-        }
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        return new SuccessResult<Unit>(Unit.Value);
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace Equinor.Lighthouse.Api.WebApi.Misc
+namespace Equinor.Lighthouse.Api.WebApi.Misc;
+
+public class InValidProjectException : Exception
 {
-    public class InValidProjectException : Exception
+    public InValidProjectException(string error) : base(error)
     {
-        public InValidProjectException(string error) : base(error)
-        {
-        }
     }
 }

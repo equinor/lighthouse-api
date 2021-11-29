@@ -1,31 +1,30 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Equinor.Lighthouse.Api.Domain
+namespace Equinor.Lighthouse.Api.Domain;
+
+public static class EnumExtensions
 {
-    public static class EnumExtensions
+    public static string GetDescription<T>(this T enumValue)
+        where T : struct, IConvertible
     {
-        public static string GetDescription<T>(this T enumValue)
-            where T : struct, IConvertible
+        if (!typeof(T).IsEnum)
         {
-            if (!typeof(T).IsEnum)
-            {
-                return null;
-            }
-
-            var description = enumValue.ToString();
-            var fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
-
-            if (fieldInfo != null)
-            {
-                var attrs = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
-                if (attrs.Length > 0)
-                {
-                    description = ((DescriptionAttribute)attrs[0]).Description;
-                }
-            }
-
-            return description;
+            return null;
         }
+
+        var description = enumValue.ToString();
+        var fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
+
+        if (fieldInfo != null)
+        {
+            var attrs = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
+            if (attrs.Length > 0)
+            {
+                description = ((DescriptionAttribute)attrs[0]).Description;
+            }
+        }
+
+        return description;
     }
 }

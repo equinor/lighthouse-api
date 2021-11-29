@@ -22,180 +22,180 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace Equinor.Lighthouse.Api.WebApi
+namespace Equinor.Lighthouse.Api.WebApi;
+
+public class Startup
 {
-    public class Startup
+    private const string AllowAllOriginsCorsPolicy = "AllowAllOrigins";
+    private readonly IWebHostEnvironment _environment;
+
+    public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
-        private const string AllowAllOriginsCorsPolicy = "AllowAllOrigins";
-        private readonly IWebHostEnvironment _environment;
+        Configuration = configuration;
+        _environment = webHostEnvironment;
+    }
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+    public IConfiguration Configuration { get; }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        if (_environment.IsDevelopment())
         {
-            Configuration = configuration;
-            _environment = webHostEnvironment;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            if (_environment.IsDevelopment())
+            if (Configuration.GetValue<bool>("MigrateDatabase"))
             {
-                if (Configuration.GetValue<bool>("MigrateDatabase"))
-                {
-                    services.AddHostedService<DatabaseMigrator>();
-                }
-
-                if (Configuration.GetValue<bool>("SeedDummyData"))
-                {
-                }
+                services.AddHostedService<DatabaseMigrator>();
             }
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    Configuration.Bind("API", options);
-                });
-
-            services.AddCors(options =>
+            if (Configuration.GetValue<bool>("SeedDummyData"))
             {
-                options.AddPolicy(AllowAllOriginsCorsPolicy,
-                    builder =>
-                    {
-                        builder
+            }
+        }
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                Configuration.Bind("API", options);
+            });
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy(AllowAllOriginsCorsPolicy,
+                builder =>
+                {
+                    builder
                         .AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
-                    });
-            });
-
-            services.AddMvc(config =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
-            }).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
-            // this to solve "Multipart body length limit exceeded"
-            services.Configure<FormOptions>(x =>
-            {
-                x.ValueLengthLimit = int.MaxValue;
-                x.MultipartBodyLengthLimit = int.MaxValue;
-            });
-
-            services.AddControllers()
-                .AddFluentValidation(fv =>
-                {
-                    fv.RegisterValidatorsFromAssemblies
-                    (
-                        new List<Assembly>
-                        {
-                            typeof(IQueryMarker).GetTypeInfo().Assembly,
-                            typeof(ICommandMarker).GetTypeInfo().Assembly,
-                            typeof(Startup).Assembly,
-                        }
-                    );
-                    fv.DisableDataAnnotationsValidation = true;
                 });
+        });
 
-            var scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCoSys Preservation API", Version = "v1" });
-
-                //Define the OAuth2.0 scheme that's in use (i.e. Implicit Flow)
-                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows
-                    {
-                        Implicit = new OpenApiOAuthFlow
-                        {
-                            AuthorizationUrl = new Uri(Configuration["Swagger:AuthorizationUrl"]),
-                            Scopes = scopes
-                        }
-                    }
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
-                        },
-                        scopes.Keys.ToArray()
-                    }
-                });
-
-                c.OperationFilter<AddRoleDocumentation>();
-            });
-
-            services.ConfigureSwaggerGen(options =>
-            {
-                options.CustomSchemaIds(x => x.FullName);
-            });
-
-            services.AddFluentValidationRulesToSwagger();
-
-            services.AddResponseCompression(options =>
-            {
-                options.EnableForHttps = true;
-            });
-
-            services.AddApplicationInsightsTelemetry();
-            services.AddMediatrModules();
-            services.AddApplicationModules(Configuration);
-
-            services.AddHostedService<VerifyPreservationApiClientExists>();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        services.AddMvc(config =>
         {
-            if (env.IsDevelopment())
+            var policy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+            config.Filters.Add(new AuthorizeFilter(policy));
+        }).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+        // this to solve "Multipart body length limit exceeded"
+        services.Configure<FormOptions>(x =>
+        {
+            x.ValueLengthLimit = int.MaxValue;
+            x.MultipartBodyLengthLimit = int.MaxValue;
+        });
+
+        services.AddControllers()
+            .AddFluentValidation(fv =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseGlobalExceptionHandling();
-
-            app.UseCors(AllowAllOriginsCorsPolicy);
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProCoSys Preservation API V1");
-                c.DocExpansion(DocExpansion.List);
-                c.DisplayRequestDuration();
-
-                c.OAuthClientId(Configuration["Swagger:ClientId"]);
-                c.OAuthAppName("ProCoSys Preservation API V1");
-                c.OAuthScopeSeparator(" ");
-                c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "resource", Configuration["API:Audience"] } });
+                fv.RegisterValidatorsFromAssemblies
+                (
+                    new List<Assembly>
+                    {
+                        typeof(IQueryMarker).GetTypeInfo().Assembly,
+                        typeof(ICommandMarker).GetTypeInfo().Assembly,
+                        typeof(Startup).Assembly,
+                    }
+                );
+                fv.DisableDataAnnotationsValidation = true;
             });
 
-            app.UseHttpsRedirection();
+        var scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCoSys Preservation API", Version = "v1" });
 
-            app.UseRouting();
-
-            app.UseCurrentPlant();
-            app.UseCurrentBearerToken();
-            app.UseAuthentication();
-            app.UseCurrentUser();
-            app.UsePersonValidator();
-            app.UsePlantValidator();
-            app.UseVerifyOidInDb();
-            app.UseAuthorization();
-
-            app.UseResponseCompression();
-
-            app.UseEndpoints(endpoints =>
+            //Define the OAuth2.0 scheme that's in use (i.e. Implicit Flow)
+            c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
             {
-                endpoints.MapControllers();
+                Type = SecuritySchemeType.OAuth2,
+                Flows = new OpenApiOAuthFlows
+                {
+                    Implicit = new OpenApiOAuthFlow
+                    {
+                        AuthorizationUrl = new Uri(Configuration["Swagger:AuthorizationUrl"]),
+                        Scopes = scopes
+                    }
+                }
             });
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+                    },
+                    scopes.Keys.ToArray()
+                }
+            });
+
+            c.OperationFilter<AddRoleDocumentation>();
+        });
+
+        services.ConfigureSwaggerGen(options =>
+        {
+            options.CustomSchemaIds(x => x.FullName);
+        });
+
+        services.AddFluentValidationRulesToSwagger();
+
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+        });
+
+        services.AddApplicationInsightsTelemetry();
+        services.AddMediatrModules();
+        services.AddApplicationModules(Configuration);
+        services.AddQueryApplication();
+
+        services.AddHostedService<VerifyPreservationApiClientExists>();
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
         }
+
+        app.UseGlobalExceptionHandling();
+
+        app.UseCors(AllowAllOriginsCorsPolicy);
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProCoSys Preservation API V1");
+            c.DocExpansion(DocExpansion.List);
+            c.DisplayRequestDuration();
+
+            c.OAuthClientId(Configuration["Swagger:ClientId"]);
+            c.OAuthAppName("ProCoSys Preservation API V1");
+            c.OAuthScopeSeparator(" ");
+            c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "resource", Configuration["API:Audience"] } });
+        });
+
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
+
+        app.UseCurrentPlant();
+        app.UseCurrentBearerToken();
+        app.UseAuthentication();
+        app.UseCurrentUser();
+        app.UsePersonValidator();
+        app.UsePlantValidator();
+        app.UseVerifyOidInDb();
+        app.UseAuthorization();
+
+        app.UseResponseCompression();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
     }
 }

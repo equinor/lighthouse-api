@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.Domain.AggregateModels.ProjectAggregate
+namespace Equinor.Lighthouse.Api.Domain.AggregateModels.ProjectAggregate;
+
+public interface IProjectRepository : IRepository<Project>
 {
-    public interface IProjectRepository : IRepository<Project>
-    {
-        Task<Project> GetProjectOnlyByNameAsync(string projectName);
-    }
+    Task<Project> GetProjectOnlyByNameAsync(string projectName);
 }

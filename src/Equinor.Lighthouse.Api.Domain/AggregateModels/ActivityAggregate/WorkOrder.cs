@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate;
 
 public class WorkOrder :PlantEntityBase, IAggregateRoot
 {
-    public WorkOrder(string plant) : base(plant)
+    public WorkOrder() : base(null)
+    {
+    }
+
+    public WorkOrder(string? plant) : base(plant)
     {
     }
 

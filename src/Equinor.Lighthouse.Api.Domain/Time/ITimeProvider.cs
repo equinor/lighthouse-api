@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Equinor.Lighthouse.Api.Domain.Time
+namespace Equinor.Lighthouse.Api.Domain.Time;
+
+public interface ITimeProvider
 {
-    public interface ITimeProvider
-    {
-        DateTime UtcNow { get; }
-    }
+    DateTime UtcNow { get; }
 }

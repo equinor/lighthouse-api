@@ -1,43 +1,42 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Equinor.Lighthouse.Api.Domain
+namespace Equinor.Lighthouse.Api.Domain;
+
+public static class DateTimeExtensions
 {
-    public static class DateTimeExtensions
+    private static readonly DayOfWeek firstDayOfPreservationWeek = DayOfWeek.Monday;
+
+    public static DateTime AddWeeks(this DateTime dateTime, int weeks)
+        => dateTime.AddDays(7 * weeks);
+
+    public static string FormatAsYearAndWeekString(this DateTime dateTime)
+        => string.Concat(ISOWeek.GetYear(dateTime).ToString(), "w", ISOWeek.GetWeekOfYear(dateTime).ToString("00"));
+
+    public static DateTime StartOfPreservationWeek(this DateTime dt)
     {
-        private static readonly DayOfWeek firstDayOfPreservationWeek = DayOfWeek.Monday;
+        var dayOfWeek = GetDayOfWeekMondayAsFirst(dt);
+        var diff = -(dayOfWeek - (int)firstDayOfPreservationWeek);
+        return dt.AddDays(diff).Date;
+    }
 
-        public static DateTime AddWeeks(this DateTime dateTime, int weeks)
-            => dateTime.AddDays(7 * weeks);
-
-        public static string FormatAsYearAndWeekString(this DateTime dateTime)
-            => string.Concat(ISOWeek.GetYear(dateTime).ToString(), "w", ISOWeek.GetWeekOfYear(dateTime).ToString("00"));
-
-        public static DateTime StartOfPreservationWeek(this DateTime dt)
-        {
-            var dayOfWeek = GetDayOfWeekMondayAsFirst(dt);
-            var diff = -(dayOfWeek - (int)firstDayOfPreservationWeek);
-            return dt.AddDays(diff).Date;
-        }
-
-        public static int GetWeeksUntil(this DateTime fromDateTime, DateTime toDateTime)
-        {
-            var startOfFromWeek = fromDateTime.StartOfPreservationWeek();
-            var startOfToWeek = toDateTime.StartOfPreservationWeek();
-            var timeSpan = startOfToWeek - startOfFromWeek;
+    public static int GetWeeksUntil(this DateTime fromDateTime, DateTime toDateTime)
+    {
+        var startOfFromWeek = fromDateTime.StartOfPreservationWeek();
+        var startOfToWeek = toDateTime.StartOfPreservationWeek();
+        var timeSpan = startOfToWeek - startOfFromWeek;
             
-            return timeSpan.Weeks();
-        }
+        return timeSpan.Weeks();
+    }
 
-        private static int GetDayOfWeekMondayAsFirst(DateTime dt)
+    private static int GetDayOfWeekMondayAsFirst(DateTime dt)
+    {
+        if (dt.DayOfWeek == DayOfWeek.Sunday)
         {
-            if (dt.DayOfWeek == DayOfWeek.Sunday)
-            {
-                // treat Sunday as last day of week since enum DayOfWeek has Sunday as 0
-                return 7;
-            }
-
-            return (int)dt.DayOfWeek;
+            // treat Sunday as last day of week since enum DayOfWeek has Sunday as 0
+            return 7;
         }
+
+        return (int)dt.DayOfWeek;
     }
 }

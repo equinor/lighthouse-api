@@ -1,33 +1,32 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Lighthouse.Api.MainApi.Tag
+namespace Equinor.Lighthouse.Api.MainApi.Tag;
+
+public class PCSTagDetailsComparer : IEqualityComparer<PCSTagDetails>
 {
-    public class PCSTagDetailsComparer : IEqualityComparer<PCSTagDetails>
+    public bool Equals(PCSTagDetails d1, PCSTagDetails d2)
     {
-        public bool Equals(PCSTagDetails d1, PCSTagDetails d2)
+        if (d2 == null && d1 == null)
         {
-            if (d2 == null && d1 == null)
-            {
-                return true;
-            }
+            return true;
+        }
 
-            if (d1 == null || d2 == null)
-            {
-                return false;
-            }
-
-            if (d1.RegisterCode == d2.RegisterCode && d1.TagFunctionCode == d2.TagFunctionCode)
-            {
-                return true;
-            }
-                
+        if (d1 == null || d2 == null)
+        {
             return false;
         }
 
-        public int GetHashCode(PCSTagDetails d)
+        if (d1.RegisterCode == d2.RegisterCode && d1.TagFunctionCode == d2.TagFunctionCode)
         {
-            var hCode = d.RegisterCode.GetHashCode() ^ d.TagFunctionCode.GetHashCode();
-            return hCode.GetHashCode();
+            return true;
         }
+                
+        return false;
+    }
+
+    public int GetHashCode(PCSTagDetails d)
+    {
+        var hCode = d.RegisterCode.GetHashCode() ^ d.TagFunctionCode.GetHashCode();
+        return hCode.GetHashCode();
     }
 }

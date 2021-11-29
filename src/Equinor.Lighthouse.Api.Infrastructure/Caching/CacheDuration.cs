@@ -1,9 +1,8 @@
-﻿namespace Equinor.Lighthouse.Api.Infrastructure.Caching
+﻿namespace Equinor.Lighthouse.Api.Infrastructure.Caching;
+
+public enum CacheDuration
 {
-    public enum CacheDuration
-    {
-        Seconds,
-        Minutes,
-        Hours
-    }
+    Seconds,
+    Minutes,
+    Hours
 }

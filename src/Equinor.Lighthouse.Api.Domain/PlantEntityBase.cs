@@ -1,15 +1,14 @@
-﻿namespace Equinor.Lighthouse.Api.Domain
+﻿namespace Equinor.Lighthouse.Api.Domain;
+
+/// <summary>
+/// Base class for entities to be filtered by plant
+/// </summary>
+public abstract class PlantEntityBase : EntityBase
 {
-    /// <summary>
-    /// Base class for entities to be filtered by plant
-    /// </summary>
-    public abstract class PlantEntityBase : EntityBase
-    {
-        public const int PlantLengthMax = 255;
-        public const int PlantLengthMin = 5;
+    public const int PlantLengthMax = 255;
+    public const int PlantLengthMin = 5;
 
-        protected PlantEntityBase(string? plant) => Plant = plant;
+    protected PlantEntityBase(string? plant) => Plant = plant;
 
-        public virtual string? Plant { get; private set; }
-    }
+    public virtual string? Plant { get; private set; }
 }

@@ -1,7 +1,6 @@
-﻿namespace Equinor.Lighthouse.Api.WebApi.Misc
+﻿namespace Equinor.Lighthouse.Api.WebApi.Misc;
+
+public interface IBearerTokenSetter
 {
-    public interface IBearerTokenSetter
-    {
-        void SetBearerToken(string token);
-    }
+    void SetBearerToken(string token);
 }

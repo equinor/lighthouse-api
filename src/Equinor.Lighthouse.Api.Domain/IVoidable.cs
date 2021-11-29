@@ -1,7 +1,6 @@
-﻿namespace Equinor.Lighthouse.Api.Domain
+﻿namespace Equinor.Lighthouse.Api.Domain;
+
+public interface IVoidable
 {
-    public interface IVoidable
-    {
-        bool IsVoided { get; set; }
-    }
+    bool IsVoided { get; set; }
 }

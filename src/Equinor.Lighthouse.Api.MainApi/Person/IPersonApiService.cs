@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.MainApi.Person
+namespace Equinor.Lighthouse.Api.MainApi.Person;
+
+public interface IPersonApiService
 {
-    public interface IPersonApiService
-    {
-        Task<PCSPerson> TryGetPersonByOidAsync(Guid azureOid);
-    }
+    Task<PCSPerson> TryGetPersonByOidAsync(Guid azureOid);
 }

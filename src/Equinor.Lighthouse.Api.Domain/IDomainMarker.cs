@@ -1,7 +1,6 @@
-﻿namespace Equinor.Lighthouse.Api.Domain
+﻿namespace Equinor.Lighthouse.Api.Domain;
+
+public interface IDomainMarker
 {
-    public interface IDomainMarker
-    {
-        // Marker interface for assembly
-    }
+    // Marker interface for assembly
 }

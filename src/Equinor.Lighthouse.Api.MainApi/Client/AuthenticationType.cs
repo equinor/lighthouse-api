@@ -1,8 +1,7 @@
-﻿namespace Equinor.Lighthouse.Api.MainApi.Client
+﻿namespace Equinor.Lighthouse.Api.MainApi.Client;
+
+public enum AuthenticationType
 {
-    public enum AuthenticationType
-    {
-        OnBehalfOf, 
-        AsApplication
-    }
+    OnBehalfOf, 
+    AsApplication
 }

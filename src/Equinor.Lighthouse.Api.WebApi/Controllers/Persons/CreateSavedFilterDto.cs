@@ -1,10 +1,9 @@
-﻿namespace Equinor.Lighthouse.Api.WebApi.Controllers.Persons
+﻿namespace Equinor.Lighthouse.Api.WebApi.Controllers.Persons;
+
+public class CreateSavedFilterDto
 {
-    public class CreateSavedFilterDto
-    {
-        public string ProjectName { get; set; }
-        public string? Title { get; set; }
-        public string? Criteria { get; set; }
-        public bool DefaultFilter { get; set; }
-    }
+    public string ProjectName { get; set; }
+    public string? Title { get; set; }
+    public string? Criteria { get; set; }
+    public bool DefaultFilter { get; set; }
 }

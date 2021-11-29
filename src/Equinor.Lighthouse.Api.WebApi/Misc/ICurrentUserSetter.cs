@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Equinor.Lighthouse.Api.WebApi.Misc
+namespace Equinor.Lighthouse.Api.WebApi.Misc;
+
+public interface ICurrentUserSetter
 {
-    public interface ICurrentUserSetter
-    {
-        void SetCurrentUserOid(Guid oid);
-    }
+    void SetCurrentUserOid(Guid oid);
 }

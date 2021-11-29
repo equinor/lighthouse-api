@@ -6,34 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace Equinor.Lighthouse.Api.WebApi.Misc
+namespace Equinor.Lighthouse.Api.WebApi.Misc;
+
+public static class HttpContextExtension
 {
-    public static class HttpContextExtension
+    public static async Task WriteBadRequestAsync(
+        this HttpContext context,
+        Dictionary<string, string[]> errors,
+        ILogger logger)
     {
-        public static async Task WriteBadRequestAsync(
-            this HttpContext context,
-            Dictionary<string, string[]> errors,
-            ILogger logger)
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        context.Response.ContentType = "application/problem+json";
+        var problems = new ValidationProblemDetails(errors)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            context.Response.ContentType = "application/problem+json";
-            var problems = new ValidationProblemDetails(errors)
-            {
-                Status = context.Response.StatusCode,
-                Title = "One or more business validation errors occurred"
-            };
-            var json = JsonSerializer.Serialize(problems);
-            logger.LogInformation(json);
+            Status = context.Response.StatusCode,
+            Title = "One or more business validation errors occurred"
+        };
+        var json = JsonSerializer.Serialize(problems);
+        logger.LogInformation(json);
 
-            await context.Response.WriteAsync(json);
-        }
+        await context.Response.WriteAsync(json);
+    }
 
-        public static async Task WriteForbidden(this HttpContext context, ILogger logger)
-        {
-            logger.LogWarning("Unauthorized");
-            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-            context.Response.ContentType = "application/text";
-            await context.Response.WriteAsync("Unauthorized!");
-        }
+    public static async Task WriteForbidden(this HttpContext context, ILogger logger)
+    {
+        logger.LogWarning("Unauthorized");
+        context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+        context.Response.ContentType = "application/text";
+        await context.Response.WriteAsync("Unauthorized!");
     }
 }

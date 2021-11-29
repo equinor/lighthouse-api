@@ -1,7 +1,6 @@
-﻿namespace Equinor.Lighthouse.Api.MainApi.Certificate
+﻿namespace Equinor.Lighthouse.Api.MainApi.Certificate;
+
+public class PCSCertificateTag
 {
-    public class PCSCertificateTag
-    {
-        public string TagNo { get; set; }
-    }
+    public string TagNo { get; set; }
 }

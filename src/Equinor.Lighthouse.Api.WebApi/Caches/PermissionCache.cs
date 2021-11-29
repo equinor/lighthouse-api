@@ -7,89 +7,88 @@ using Equinor.Lighthouse.Api.Infrastructure.Caching;
 using Equinor.Lighthouse.Api.MainApi.Permission;
 using Microsoft.Extensions.Options;
 
-namespace Equinor.Lighthouse.Api.WebApi.Caches
+namespace Equinor.Lighthouse.Api.WebApi.Caches;
+
+public class PermissionCache : IPermissionCache
 {
-    public class PermissionCache : IPermissionCache
+    private readonly ICacheManager _cacheManager;
+    private readonly IPermissionApiService _permissionApiService;
+    private readonly IOptionsMonitor<CacheOptions> _options;
+
+    public PermissionCache(
+        ICacheManager cacheManager,
+        IPermissionApiService permissionApiService,
+        IOptionsMonitor<CacheOptions> options)
     {
-        private readonly ICacheManager _cacheManager;
-        private readonly IPermissionApiService _permissionApiService;
-        private readonly IOptionsMonitor<CacheOptions> _options;
+        _cacheManager = cacheManager;
+        _permissionApiService = permissionApiService;
+        _options = options;
+    }
 
-        public PermissionCache(
-            ICacheManager cacheManager,
-            IPermissionApiService permissionApiService,
-            IOptionsMonitor<CacheOptions> options)
+    public async Task<IList<string>> GetPermissionsForUserAsync(string plantId, Guid userOid)
+        => await _cacheManager.GetOrCreate(
+            PermissionsCacheKey(plantId, userOid),
+            async () => await _permissionApiService.GetPermissionsAsync(plantId),
+            CacheDuration.Minutes,
+            _options.CurrentValue.PermissionCacheMinutes);
+
+    public async Task<IList<string>> GetProjectsForUserAsync(string plantId, Guid userOid)
+    {
+        var allProjects = await GetAllProjectsForUserAsync(plantId, userOid);
+        return allProjects?.Where(p => p.HasAccess).Select(p => p.Name).ToList();
+    }
+
+    public async Task<bool> IsAValidProjectAsync(string plantId, Guid userOid, string projectName)
+    {
+        var allProjects = await GetAllProjectsForUserAsync(plantId, userOid);
+        return allProjects != null && allProjects.Any(p => p.Name == projectName);
+    }
+
+    public async Task<IList<string>> GetContentRestrictionsForUserAsync(string plantId, Guid userOid)
+        => await _cacheManager.GetOrCreate(
+            ContentRestrictionsCacheKey(plantId, userOid),
+            async () => await _permissionApiService.GetContentRestrictionsAsync(plantId),
+            CacheDuration.Minutes,
+            _options.CurrentValue.PermissionCacheMinutes);
+
+    public void ClearAll(string plantId, Guid userOid)
+    {
+        _cacheManager.Remove(ProjectsCacheKey(plantId, userOid));
+        _cacheManager.Remove(PermissionsCacheKey(plantId, userOid));
+        _cacheManager.Remove(ContentRestrictionsCacheKey(plantId, userOid));
+    }
+
+    private async Task<IList<PCSProject>> GetAllProjectsForUserAsync(string plantId, Guid userOid)
+        => await _cacheManager.GetOrCreate(
+            ProjectsCacheKey(plantId, userOid),
+            async () => await _permissionApiService.GetAllOpenProjectsAsync(plantId),
+            CacheDuration.Minutes,
+            _options.CurrentValue.PermissionCacheMinutes);
+
+    private string ProjectsCacheKey(string plantId, Guid userOid)
+    {
+        if (userOid == Guid.Empty)
         {
-            _cacheManager = cacheManager;
-            _permissionApiService = permissionApiService;
-            _options = options;
+            throw new Exception("Illegal userOid for cache");
         }
+        return $"PROJECTS_{userOid.ToString().ToUpper()}_{plantId}";
+    }
 
-        public async Task<IList<string>> GetPermissionsForUserAsync(string plantId, Guid userOid)
-            => await _cacheManager.GetOrCreate(
-                PermissionsCacheKey(plantId, userOid),
-                async () => await _permissionApiService.GetPermissionsAsync(plantId),
-                CacheDuration.Minutes,
-                _options.CurrentValue.PermissionCacheMinutes);
-
-        public async Task<IList<string>> GetProjectsForUserAsync(string plantId, Guid userOid)
+    private static string PermissionsCacheKey(string plantId, Guid userOid)
+    {
+        if (userOid == Guid.Empty)
         {
-            var allProjects = await GetAllProjectsForUserAsync(plantId, userOid);
-            return allProjects?.Where(p => p.HasAccess).Select(p => p.Name).ToList();
+            throw new Exception("Illegal userOid for cache");
         }
+        return $"PERMISSIONS_{userOid.ToString().ToUpper()}_{plantId}";
+    }
 
-        public async Task<bool> IsAValidProjectAsync(string plantId, Guid userOid, string projectName)
+    private static string ContentRestrictionsCacheKey(string plantId, Guid userOid)
+    {
+        if (userOid == Guid.Empty)
         {
-            var allProjects = await GetAllProjectsForUserAsync(plantId, userOid);
-            return allProjects != null && allProjects.Any(p => p.Name == projectName);
+            throw new Exception("Illegal userOid for cache");
         }
-
-        public async Task<IList<string>> GetContentRestrictionsForUserAsync(string plantId, Guid userOid)
-            => await _cacheManager.GetOrCreate(
-                ContentRestrictionsCacheKey(plantId, userOid),
-                async () => await _permissionApiService.GetContentRestrictionsAsync(plantId),
-                CacheDuration.Minutes,
-                _options.CurrentValue.PermissionCacheMinutes);
-
-        public void ClearAll(string plantId, Guid userOid)
-        {
-            _cacheManager.Remove(ProjectsCacheKey(plantId, userOid));
-            _cacheManager.Remove(PermissionsCacheKey(plantId, userOid));
-            _cacheManager.Remove(ContentRestrictionsCacheKey(plantId, userOid));
-        }
-
-        private async Task<IList<PCSProject>> GetAllProjectsForUserAsync(string plantId, Guid userOid)
-            => await _cacheManager.GetOrCreate(
-                ProjectsCacheKey(plantId, userOid),
-                async () => await _permissionApiService.GetAllOpenProjectsAsync(plantId),
-                CacheDuration.Minutes,
-                _options.CurrentValue.PermissionCacheMinutes);
-
-        private string ProjectsCacheKey(string plantId, Guid userOid)
-        {
-            if (userOid == Guid.Empty)
-            {
-                throw new Exception("Illegal userOid for cache");
-            }
-            return $"PROJECTS_{userOid.ToString().ToUpper()}_{plantId}";
-        }
-
-        private static string PermissionsCacheKey(string plantId, Guid userOid)
-        {
-            if (userOid == Guid.Empty)
-            {
-                throw new Exception("Illegal userOid for cache");
-            }
-            return $"PERMISSIONS_{userOid.ToString().ToUpper()}_{plantId}";
-        }
-
-        private static string ContentRestrictionsCacheKey(string plantId, Guid userOid)
-        {
-            if (userOid == Guid.Empty)
-            {
-                throw new Exception("Illegal userOid for cache");
-            }
-            return $"CONTENTRESTRICTIONS_{userOid.ToString().ToUpper()}_{plantId}";
-        }
+        return $"CONTENTRESTRICTIONS_{userOid.ToString().ToUpper()}_{plantId}";
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace Equinor.Lighthouse.Api.Domain
+namespace Equinor.Lighthouse.Api.Domain;
+
+public interface ICurrentUserProvider
 {
-    public interface ICurrentUserProvider
-    {
-        Guid GetCurrentUserOid();
-        bool HasCurrentUser();
-    }
+    Guid GetCurrentUserOid();
+    bool HasCurrentUser();
 }

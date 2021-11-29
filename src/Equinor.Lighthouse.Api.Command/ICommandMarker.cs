@@ -1,7 +1,6 @@
-﻿namespace Equinor.Lighthouse.Api.Command
+﻿namespace Equinor.Lighthouse.Api.Command;
+
+public interface ICommandMarker
 {
-    public interface ICommandMarker
-    {
-        // Marker interface for assembly
-    }
+    // Marker interface for assembly
 }

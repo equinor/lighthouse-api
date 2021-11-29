@@ -1,8 +1,7 @@
-﻿namespace Equinor.Lighthouse.Api.Domain.Events
+﻿namespace Equinor.Lighthouse.Api.Domain.Events;
+
+public enum RescheduledDirection
 {
-    public enum RescheduledDirection
-    {
-        Earlier,
-        Later
-    }
+    Earlier,
+    Later
 }

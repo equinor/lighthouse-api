@@ -1,7 +1,6 @@
-﻿namespace Equinor.Lighthouse.Api.MainApi.Client
+﻿namespace Equinor.Lighthouse.Api.MainApi.Client;
+
+public interface IAuthenticator
 {
-    public interface IAuthenticator
-    {
-        AuthenticationType AuthenticationType { get; set; }
-    }
+    AuthenticationType AuthenticationType { get; set; }
 }

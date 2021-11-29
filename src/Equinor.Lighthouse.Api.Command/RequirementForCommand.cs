@@ -1,14 +1,13 @@
-﻿namespace Equinor.Lighthouse.Api.Command
-{
-    public class RequirementForCommand
-    {
-        public RequirementForCommand(int requirementDefinitionId, int intervalWeeks)
-        {
-            RequirementDefinitionId = requirementDefinitionId;
-            IntervalWeeks = intervalWeeks;
-        }
+﻿namespace Equinor.Lighthouse.Api.Command;
 
-        public int RequirementDefinitionId { get;  }
-        public int IntervalWeeks { get; }
+public class RequirementForCommand
+{
+    public RequirementForCommand(int requirementDefinitionId, int intervalWeeks)
+    {
+        RequirementDefinitionId = requirementDefinitionId;
+        IntervalWeeks = intervalWeeks;
     }
+
+    public int RequirementDefinitionId { get;  }
+    public int IntervalWeeks { get; }
 }

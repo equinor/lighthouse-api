@@ -1,9 +1,8 @@
 ﻿using System.Security.Claims;
 
-namespace Equinor.Lighthouse.Api.WebApi.Misc
+namespace Equinor.Lighthouse.Api.WebApi.Misc;
+
+public interface IClaimsProvider
 {
-    public interface IClaimsProvider
-    {
-        ClaimsPrincipal GetCurrentUser();
-    }
+    ClaimsPrincipal GetCurrentUser();
 }

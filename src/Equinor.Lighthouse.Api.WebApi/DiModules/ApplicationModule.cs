@@ -1,4 +1,5 @@
-﻿using Equinor.ProCoSys.PcsServiceBus.Receiver;
+﻿using System.Reflection;
+using Equinor.ProCoSys.PcsServiceBus.Receiver;
 using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
 using Equinor.Lighthouse.Api.BlobStorage;
 using Equinor.Lighthouse.Api.Command.EventHandlers;
@@ -32,84 +33,81 @@ using Equinor.Lighthouse.Api.WebApi.Caches;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Equinor.Lighthouse.Api.WebApi.Authentication;
 using Equinor.Lighthouse.Api.WebApi.Telemetry;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Equinor.Lighthouse.Api.WebApi.DIModules
+namespace Equinor.Lighthouse.Api.WebApi.DIModules;
+
+public static class ApplicationModule
 {
-    public static class ApplicationModule
+    public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
     {
-        public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
+        TimeService.SetProvider(new SystemTimeProvider());
+
+        services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
+        services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
+        services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
+        services.Configure<AuthenticatorOptions>(configuration.GetSection("Authenticator"));
+
+        services.AddDbContext<ApplicationContext>(options =>
         {
-            TimeService.SetProvider(new SystemTimeProvider());
+            var connectionString = configuration.GetConnectionString("DevelopmentConnection"); //TODO
+            options.UseSqlServer(connectionString);
+        });
 
-            services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
-            services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
-            services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
-            services.Configure<AuthenticatorOptions>(configuration.GetSection("Authenticator"));
+        services.AddHttpContextAccessor();
+        services.AddHttpClient();
+        // Transient - Created each time it is requested from the service container
 
-            services.AddDbContext<ApplicationContext>(options =>
-            {
-                var connectionString = configuration.GetConnectionString("LocalDb");
-                options.UseSqlServer(connectionString);
-            });
+        // Scoped - Created once per client request (connection)
+        services.AddScoped<ITelemetryClient, ApplicationInsightsTelemetryClient>();
+        services.AddScoped<IPersonCache, PersonCache>();
+        services.AddScoped<IPlantCache, PlantCache>();
+        services.AddScoped<IPermissionCache, PermissionCache>();
+        services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
+        services.AddScoped<IClaimsProvider, ClaimsProvider>();
+        services.AddScoped<CurrentUserProvider>();
+        services.AddScoped<ICurrentUserProvider>(x => x.GetRequiredService<CurrentUserProvider>());
+        services.AddScoped<ICurrentUserSetter>(x => x.GetRequiredService<CurrentUserProvider>());
+        services.AddScoped<PlantProvider>();
+        services.AddScoped<IPlantProvider>(x => x.GetRequiredService<PlantProvider>());
+        services.AddScoped<IPlantSetter>(x => x.GetRequiredService<PlantProvider>());
+        services.AddScoped<IAccessValidator, AccessValidator>();
+        services.AddScoped<IProjectChecker, ProjectChecker>();
+        services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
+        services.AddScoped<IContentRestrictionsChecker, ContentRestrictionsChecker>();
+        services.AddScoped<IEventDispatcher, EventDispatcher>();
+        services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<ApplicationContext>());
+        services.AddScoped<IReadOnlyContext, ApplicationContext>();
 
-            services.AddHttpContextAccessor();
-            services.AddHttpClient();
+        services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
+        services.AddScoped<IPersonRepository, PersonRepository>();
+        services.AddScoped<ISettingRepository, SettingRepository>();
 
-            // Transient - Created each time it is requested from the service container
+        services.AddScoped<Authenticator>();
+        services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<Authenticator>());
+        services.AddScoped<IBearerTokenSetter>(x => x.GetRequiredService<Authenticator>());
+        services.AddScoped<IAuthenticator>(x => x.GetRequiredService<Authenticator>());
+        services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
+        services.AddScoped<IPlantApiService, MainApiPlantService>();
+        services.AddScoped<IPersonApiService, MainApiPersonService>();
+        services.AddScoped<IProjectApiService, MainApiProjectService>();
+        services.AddScoped<IAreaApiService, MainApiAreaService>();
+        services.AddScoped<IDisciplineApiService, MainApiDisciplineService>();
+        services.AddScoped<IResponsibleApiService, MainApiResponsibleService>();
+        services.AddScoped<IPermissionApiService, MainApiPermissionService>();
+        services.AddScoped<ICertificateApiService, MainApiCertificateService>();
+        services.AddScoped<IBlobStorage, AzureBlobService>();
 
+        services.AddScoped<IProjectValidator, ProjectValidator>();
+        services.AddScoped<IResponsibleValidator, ResponsibleValidator>();
+        services.AddScoped<IRowVersionValidator, RowVersionValidator>();
+        services.AddScoped<ISavedFilterValidator, SavedFilterValidator>();
 
-            // Scoped - Created once per client request (connection)
-            services.AddScoped<ITelemetryClient, ApplicationInsightsTelemetryClient>();
-            services.AddScoped<IPersonCache, PersonCache>();
-            services.AddScoped<IPlantCache, PlantCache>();
-            services.AddScoped<IPermissionCache, PermissionCache>();
-            services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
-            services.AddScoped<IClaimsProvider, ClaimsProvider>();
-            services.AddScoped<CurrentUserProvider>();
-            services.AddScoped<ICurrentUserProvider>(x => x.GetRequiredService<CurrentUserProvider>());
-            services.AddScoped<ICurrentUserSetter>(x => x.GetRequiredService<CurrentUserProvider>());
-            services.AddScoped<PlantProvider>();
-            services.AddScoped<IPlantProvider>(x => x.GetRequiredService<PlantProvider>());
-            services.AddScoped<IPlantSetter>(x => x.GetRequiredService<PlantProvider>());
-            services.AddScoped<IAccessValidator, AccessValidator>();
-            services.AddScoped<IProjectChecker, ProjectChecker>();
-            services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
-            services.AddScoped<IContentRestrictionsChecker, ContentRestrictionsChecker>();
-            services.AddScoped<IEventDispatcher, EventDispatcher>();
-            services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<ApplicationContext>());
-            services.AddScoped<IReadOnlyContext, ApplicationContext>();
-
-            services.AddScoped<IProjectRepository, ProjectRepository>();
-            services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
-            services.AddScoped<IPersonRepository, PersonRepository>();
-            services.AddScoped<ISettingRepository, SettingRepository>();
-
-            services.AddScoped<Authenticator>();
-            services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<Authenticator>());
-            services.AddScoped<IBearerTokenSetter>(x => x.GetRequiredService<Authenticator>());
-            services.AddScoped<IAuthenticator>(x => x.GetRequiredService<Authenticator>());
-            services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
-            services.AddScoped<IPlantApiService, MainApiPlantService>();
-            services.AddScoped<IPersonApiService, MainApiPersonService>();
-            services.AddScoped<IProjectApiService, MainApiProjectService>();
-            services.AddScoped<IAreaApiService, MainApiAreaService>();
-            services.AddScoped<IDisciplineApiService, MainApiDisciplineService>();
-            services.AddScoped<IResponsibleApiService, MainApiResponsibleService>();
-            services.AddScoped<IPermissionApiService, MainApiPermissionService>();
-            services.AddScoped<ICertificateApiService, MainApiCertificateService>();
-            services.AddScoped<IBlobStorage, AzureBlobService>();
-
-            services.AddScoped<IProjectValidator, ProjectValidator>();
-            services.AddScoped<IResponsibleValidator, ResponsibleValidator>();
-            services.AddScoped<IRowVersionValidator, RowVersionValidator>();
-            services.AddScoped<ISavedFilterValidator, SavedFilterValidator>();
-
-            // Singleton - Created the first time they are requested
-            services.AddSingleton<ICacheManager, CacheManager>();
-            services.AddSingleton<IBusReceiverServiceFactory, ScopedBusReceiverServiceFactory>();
-        }
+        // Singleton - Created the first time they are requested
+        services.AddSingleton<ICacheManager, CacheManager>();
+        services.AddSingleton<IBusReceiverServiceFactory, ScopedBusReceiverServiceFactory>();
     }
 }

@@ -2,9 +2,8 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Lighthouse.Api.Query.ResponsibleAggregate
+namespace Equinor.Lighthouse.Api.Query.ResponsibleAggregate;
+
+public class GetAllResponsiblesQuery : IRequest<Result<IEnumerable<ResponsibleDto>>>
 {
-    public class GetAllResponsiblesQuery : IRequest<Result<IEnumerable<ResponsibleDto>>>
-    {
-    }
 }

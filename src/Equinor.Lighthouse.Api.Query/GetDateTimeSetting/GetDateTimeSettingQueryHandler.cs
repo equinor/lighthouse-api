@@ -8,26 +8,25 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Lighthouse.Api.Query.GetDateTimeSetting
+namespace Equinor.Lighthouse.Api.Query.GetDateTimeSetting;
+
+public class GetDateTimeSettingQueryHandler : IRequestHandler<GetDateTimeSettingQuery, Result<DateTime?>>
 {
-    public class GetDateTimeSettingQueryHandler : IRequestHandler<GetDateTimeSettingQuery, Result<DateTime?>>
+    private readonly IReadOnlyContext _context;
+
+    public GetDateTimeSettingQueryHandler(IReadOnlyContext context) => _context = context;
+
+    public async Task<Result<DateTime?>> Handle(GetDateTimeSettingQuery request, CancellationToken cancellationToken)
     {
-        private readonly IReadOnlyContext _context;
+        var setting = await (from s in _context.QuerySet<Setting>()
+            where s.Code == request.SettingCode
+            select s).SingleOrDefaultAsync(cancellationToken);
 
-        public GetDateTimeSettingQueryHandler(IReadOnlyContext context) => _context = context;
-
-        public async Task<Result<DateTime?>> Handle(GetDateTimeSettingQuery request, CancellationToken cancellationToken)
+        if (setting == null)
         {
-            var setting = await (from s in _context.QuerySet<Setting>()
-                where s.Code == request.SettingCode
-                select s).SingleOrDefaultAsync(cancellationToken);
-
-            if (setting == null)
-            {
-                return new NotFoundResult<DateTime?>($"Setting with code {request.SettingCode} not found");
-            }
-            
-            return new SuccessResult<DateTime?>(setting.DateTimeUtc);
+            return new NotFoundResult<DateTime?>($"Setting with code {request.SettingCode} not found");
         }
+            
+        return new SuccessResult<DateTime?>(setting.DateTimeUtc);
     }
 }

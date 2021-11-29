@@ -4,27 +4,26 @@ using Equinor.Lighthouse.Api.Command.Validators.ProjectValidators;
 using Equinor.Lighthouse.Api.Command.Validators.SavedFilterValidators;
 using FluentValidation;
 
-namespace Equinor.Lighthouse.Api.Command.PersonCommands.CreateSavedFilter
-{
-    public class CreateSavedFilterCommandValidator : AbstractValidator<CreateSavedFilterCommand>
-    {
-        public CreateSavedFilterCommandValidator(
-            ISavedFilterValidator savedFilterValidator,
-            IProjectValidator projectValidator)
-        {
-            CascadeMode = CascadeMode.Stop;
+namespace Equinor.Lighthouse.Api.Command.PersonCommands.CreateSavedFilter;
 
-            RuleFor(command => command)
-                .MustAsync((command, token) => NotExistsASavedFilterWithSameTitleForPerson(command.Title, command.ProjectName, token))
-                .WithMessage(command => $"A saved filter with this title already exists! Title={command.Title}");
-            RuleFor(command => command)
-                .MustAsync((command, token) => BeAnExistingProject(command.ProjectName, token))
-                .WithMessage(command => $"Project doesn't exist! Project={command.ProjectName}");
+public class CreateSavedFilterCommandValidator : AbstractValidator<CreateSavedFilterCommand>
+{
+    public CreateSavedFilterCommandValidator(
+        ISavedFilterValidator savedFilterValidator,
+        IProjectValidator projectValidator)
+    {
+        CascadeMode = CascadeMode.Stop;
+
+        RuleFor(command => command)
+            .MustAsync((command, token) => NotExistsASavedFilterWithSameTitleForPerson(command.Title, command.ProjectName, token))
+            .WithMessage(command => $"A saved filter with this title already exists! Title={command.Title}");
+        RuleFor(command => command)
+            .MustAsync((command, token) => BeAnExistingProject(command.ProjectName, token))
+            .WithMessage(command => $"Project doesn't exist! Project={command.ProjectName}");
             
-            async Task<bool> NotExistsASavedFilterWithSameTitleForPerson(string? title, string projectName, CancellationToken token)
-                => !await savedFilterValidator.ExistsWithSameTitleForPersonInProjectAsync(title, projectName, token);
-            async Task<bool> BeAnExistingProject(string projectName, CancellationToken token)
-                => await projectValidator.ExistsAsync(projectName, token);
-        }
+        async Task<bool> NotExistsASavedFilterWithSameTitleForPerson(string? title, string projectName, CancellationToken token)
+            => !await savedFilterValidator.ExistsWithSameTitleForPersonInProjectAsync(title, projectName, token);
+        async Task<bool> BeAnExistingProject(string projectName, CancellationToken token)
+            => await projectValidator.ExistsAsync(projectName, token);
     }
 }

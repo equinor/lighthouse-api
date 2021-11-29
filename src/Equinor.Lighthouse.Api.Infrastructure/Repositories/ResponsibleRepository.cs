@@ -2,15 +2,14 @@
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ResponsibleAggregate;
 using Microsoft.EntityFrameworkCore;
 
-namespace Equinor.Lighthouse.Api.Infrastructure.Repositories
+namespace Equinor.Lighthouse.Api.Infrastructure.Repositories;
+
+public class ResponsibleRepository : RepositoryBase<Responsible>, IResponsibleRepository
 {
-    public class ResponsibleRepository : RepositoryBase<Responsible>, IResponsibleRepository
+    public ResponsibleRepository(ApplicationContext context) : base(context, context.Responsibles)
     {
-        public ResponsibleRepository(ApplicationContext context) : base(context, context.Responsibles)
-        {
-        }
-        
-        public Task<Responsible?> GetByCodeAsync(string responsibleCode) 
-            => DefaultQuery.SingleOrDefaultAsync(r => r.Code == responsibleCode);
     }
+        
+    public Task<Responsible?> GetByCodeAsync(string responsibleCode) 
+        => DefaultQuery.SingleOrDefaultAsync(r => r.Code == responsibleCode);
 }

@@ -1,7 +1,6 @@
-﻿namespace Equinor.Lighthouse.Api.Query
+﻿namespace Equinor.Lighthouse.Api.Query;
+
+public interface IQueryMarker
 {
-    public interface IQueryMarker
-    {
-        // Marker interface for assembly
-    }
+    // Marker interface for assembly
 }

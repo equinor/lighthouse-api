@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Equinor.Lighthouse.Api.Domain
+namespace Equinor.Lighthouse.Api.Domain;
+
+public static class TimeSpanExtensions
 {
-    public static class TimeSpanExtensions
-    {
-        public static int Weeks(this TimeSpan span) => span.Days / 7;
-    }
+    public static int Weeks(this TimeSpan span) => span.Days / 7;
 }

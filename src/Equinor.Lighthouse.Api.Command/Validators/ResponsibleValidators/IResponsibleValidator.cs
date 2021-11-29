@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.Command.Validators.ResponsibleValidators
+namespace Equinor.Lighthouse.Api.Command.Validators.ResponsibleValidators;
+
+public interface IResponsibleValidator
 {
-    public interface IResponsibleValidator
-    {
-        Task<bool> ExistsAndIsVoidedAsync(string responsibleCode, CancellationToken cancellationToken);
-    }
+    Task<bool> ExistsAndIsVoidedAsync(string responsibleCode, CancellationToken cancellationToken);
 }

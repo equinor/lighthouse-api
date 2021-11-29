@@ -5,51 +5,50 @@ using System.Threading.Tasks;
 using Equinor.Lighthouse.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Equinor.Lighthouse.Api.Infrastructure.Repositories
+namespace Equinor.Lighthouse.Api.Infrastructure.Repositories;
+
+public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : EntityBase, IAggregateRoot
 {
-    public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : EntityBase, IAggregateRoot
+    protected readonly ApplicationContext _context;
+    protected readonly DbSet<TEntity> Set;
+    protected readonly IQueryable<TEntity> DefaultQuery;
+
+    protected RepositoryBase(ApplicationContext context, DbSet<TEntity> set)
+        : this(context, set, set)
     {
-        protected readonly ApplicationContext _context;
-        protected readonly DbSet<TEntity> Set;
-        protected readonly IQueryable<TEntity> DefaultQuery;
+    }
 
-        protected RepositoryBase(ApplicationContext context, DbSet<TEntity> set)
-            : this(context, set, set)
+    protected RepositoryBase(ApplicationContext context, DbSet<TEntity> set, IQueryable<TEntity> defaultQuery)
+    {
+        _context = context;
+        Set = set;
+        DefaultQuery = defaultQuery;
+    }
+
+    public virtual void Add(TEntity entity) =>
+        Set.Add(entity);
+
+    public Task<bool> Exists(Guid id) =>
+        DefaultQuery.AnyAsync(x => x.Id == id);
+
+    public virtual Task<List<TEntity>> GetAllAsync() =>
+        DefaultQuery.ToListAsync();
+
+    public virtual Task<TEntity> GetByIdAsync(Guid id) =>
+        DefaultQuery.SingleOrDefaultAsync(x => x.Id == id);
+
+    public Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids) =>
+        DefaultQuery.Where(x => ids.Contains(x.Id)).ToListAsync();
+
+    public virtual void Remove(TEntity entity)
+    {
+        if (entity is IVoidable voidable)
         {
-        }
-
-        protected RepositoryBase(ApplicationContext context, DbSet<TEntity> set, IQueryable<TEntity> defaultQuery)
-        {
-            _context = context;
-            Set = set;
-            DefaultQuery = defaultQuery;
-        }
-
-        public virtual void Add(TEntity entity) =>
-            Set.Add(entity);
-
-        public Task<bool> Exists(Guid id) =>
-            DefaultQuery.AnyAsync(x => x.Id == id);
-
-        public virtual Task<List<TEntity>> GetAllAsync() =>
-            DefaultQuery.ToListAsync();
-
-        public virtual Task<TEntity> GetByIdAsync(Guid id) =>
-            DefaultQuery.SingleOrDefaultAsync(x => x.Id == id);
-
-        public Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids) =>
-            DefaultQuery.Where(x => ids.Contains(x.Id)).ToListAsync();
-
-        public virtual void Remove(TEntity entity)
-        {
-            if (entity is IVoidable voidable)
+            if (!voidable.IsVoided)
             {
-                if (!voidable.IsVoided)
-                {
-                    throw new Exception($"{nameof(entity)} must be voided before delete");
-                }
+                throw new Exception($"{nameof(entity)} must be voided before delete");
             }
-            Set.Remove(entity);
         }
+        Set.Remove(entity);
     }
 }

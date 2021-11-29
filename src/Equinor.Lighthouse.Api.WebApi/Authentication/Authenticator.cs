@@ -7,92 +7,91 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
 
-namespace Equinor.Lighthouse.Api.WebApi.Authentication
+namespace Equinor.Lighthouse.Api.WebApi.Authentication;
+
+public class Authenticator : IBearerTokenProvider, IBearerTokenSetter, IAuthenticator
 {
-    public class Authenticator : IBearerTokenProvider, IBearerTokenSetter, IAuthenticator
+    private readonly IOptions<AuthenticatorOptions> _options;
+    private readonly ILogger<Authenticator> _logger;
+    private string _requestToken;
+    private string _onBehalfOfUserToken;
+    private string _applicationToken;
+    private readonly string _secretInfo;
+
+    public Authenticator(IOptions<AuthenticatorOptions> options, ILogger<Authenticator> logger)
     {
-        private readonly IOptions<AuthenticatorOptions> _options;
-        private readonly ILogger<Authenticator> _logger;
-        private string _requestToken;
-        private string _onBehalfOfUserToken;
-        private string _applicationToken;
-        private readonly string _secretInfo;
-
-        public Authenticator(IOptions<AuthenticatorOptions> options, ILogger<Authenticator> logger)
-        {
-            _options = options;
-            _logger = logger;
-            var apiSecret = _options.Value.PreservationApiSecret;
-            _secretInfo = $"{apiSecret.Substring(0, 2)}***{apiSecret.Substring(apiSecret.Length - 1, 1)}";
-            AuthenticationType = AuthenticationType.OnBehalfOf;
-        }
+        _options = options;
+        _logger = logger;
+        var apiSecret = _options.Value.PreservationApiSecret;
+        _secretInfo = $"{apiSecret.Substring(0, 2)}***{apiSecret.Substring(apiSecret.Length - 1, 1)}";
+        AuthenticationType = AuthenticationType.OnBehalfOf;
+    }
         
-        public AuthenticationType AuthenticationType { get; set; }
+    public AuthenticationType AuthenticationType { get; set; }
 
-        public void SetBearerToken(string token) => _requestToken = token;
+    public void SetBearerToken(string token) => _requestToken = token;
 
-        public async ValueTask<string> GetBearerTokenAsync()
+    public async ValueTask<string> GetBearerTokenAsync()
+    {
+        _logger.LogInformation($"Global setting=[{_options.Value.GlobalSetting}]");
+        _logger.LogInformation($"Scoped setting=[{_options.Value.ScopedSetting}]");
+
+        switch (AuthenticationType)
         {
-            _logger.LogInformation($"Global setting=[{_options.Value.GlobalSetting}]");
-            _logger.LogInformation($"Scoped setting=[{_options.Value.ScopedSetting}]");
+            case AuthenticationType.OnBehalfOf:
+                return await GetBearerTokenOnBehalfOfCurrentUserAsync();
+            case AuthenticationType.AsApplication:
+                return await GetBearerTokenForApplicationAsync();
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
 
-            switch (AuthenticationType)
+    private async ValueTask<string> GetBearerTokenOnBehalfOfCurrentUserAsync()
+    {
+        if (_onBehalfOfUserToken == null)
+        {
+            if (string.IsNullOrEmpty(_requestToken))
             {
-                case AuthenticationType.OnBehalfOf:
-                    return await GetBearerTokenOnBehalfOfCurrentUserAsync();
-                case AuthenticationType.AsApplication:
-                    return await GetBearerTokenForApplicationAsync();
-                default:
-                    throw new ArgumentOutOfRangeException();
+                throw new ArgumentNullException(nameof(_requestToken));
             }
-        }
 
-        private async ValueTask<string> GetBearerTokenOnBehalfOfCurrentUserAsync()
+            var app = CreateConfidentialPreservationClient();
+
+            var tokenResult = await app
+                .AcquireTokenOnBehalfOf(new List<string> { _options.Value.MainApiScope }, new UserAssertion(_requestToken))
+                .ExecuteAsync();
+            _logger.LogInformation("Got token on behalf of");
+
+            _onBehalfOfUserToken = tokenResult.AccessToken;
+        }
+        return _onBehalfOfUserToken;
+
+    }
+
+    private async ValueTask<string> GetBearerTokenForApplicationAsync()
+    {
+        if (_applicationToken == null)
         {
-            if (_onBehalfOfUserToken == null)
-            {
-                if (string.IsNullOrEmpty(_requestToken))
-                {
-                    throw new ArgumentNullException(nameof(_requestToken));
-                }
+            var app = CreateConfidentialPreservationClient();
 
-                var app = CreateConfidentialPreservationClient();
+            var tokenResult = await app
+                .AcquireTokenForClient(new List<string> { _options.Value.MainApiScope })
+                .ExecuteAsync();
+            _logger.LogInformation("Got token for application");
 
-                var tokenResult = await app
-                    .AcquireTokenOnBehalfOf(new List<string> { _options.Value.MainApiScope }, new UserAssertion(_requestToken))
-                    .ExecuteAsync();
-                _logger.LogInformation("Got token on behalf of");
-
-                _onBehalfOfUserToken = tokenResult.AccessToken;
-            }
-            return _onBehalfOfUserToken;
-
+            _applicationToken = tokenResult.AccessToken;
         }
+        return _applicationToken;
+    }
 
-        private async ValueTask<string> GetBearerTokenForApplicationAsync()
-        {
-            if (_applicationToken == null)
-            {
-                var app = CreateConfidentialPreservationClient();
-
-                var tokenResult = await app
-                    .AcquireTokenForClient(new List<string> { _options.Value.MainApiScope })
-                    .ExecuteAsync();
-                _logger.LogInformation("Got token for application");
-
-                _applicationToken = tokenResult.AccessToken;
-            }
-            return _applicationToken;
-        }
-
-        private IConfidentialClientApplication CreateConfidentialPreservationClient()
-        {
-            _logger.LogInformation($"Getting client using {_secretInfo} for {_options.Value.PreservationApiClientId}");
-            return ConfidentialClientApplicationBuilder
-                .Create(_options.Value.PreservationApiClientId)
-                .WithClientSecret(_options.Value.PreservationApiSecret)
-                .WithAuthority(new Uri(_options.Value.Instance))
-                .Build();
-        }
+    private IConfidentialClientApplication CreateConfidentialPreservationClient()
+    {
+        _logger.LogInformation($"Getting client using {_secretInfo} for {_options.Value.PreservationApiClientId}");
+        return ConfidentialClientApplicationBuilder
+            .Create(_options.Value.PreservationApiClientId)
+            .WithClientSecret(_options.Value.PreservationApiSecret)
+            .WithAuthority(new Uri(_options.Value.Instance))
+            .Build();
     }
 }

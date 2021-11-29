@@ -185,28 +185,24 @@ namespace Equinor.Lighthouse.Api.WebApi.IntegrationTests
 
         private void CreateSeededTestDatabase(IServiceCollection services)
         {
-            using (var serviceProvider = services.BuildServiceProvider())
+            using var serviceProvider = services.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+            var scopeServiceProvider = scope.ServiceProvider;
+            var dbContext = scopeServiceProvider.GetRequiredService<ApplicationContext>();
+
+            dbContext.Database.EnsureDeleted();
+
+            dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+
+            dbContext.CreateNewDatabaseWithCorrectSchema();
+            var migrations = dbContext.Database.GetPendingMigrations();
+            if (migrations.Any())
             {
-                using (var scope = serviceProvider.CreateScope())
-                {
-                    var scopeServiceProvider = scope.ServiceProvider;
-                    var dbContext = scopeServiceProvider.GetRequiredService<ApplicationContext>();
-
-                    dbContext.Database.EnsureDeleted();
-
-                    dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
-
-                    dbContext.CreateNewDatabaseWithCorrectSchema();
-                    var migrations = dbContext.Database.GetPendingMigrations();
-                    if (migrations.Any())
-                    {
-                        dbContext.Database.Migrate();
-                    }
-
-                    SeedDataForPlant(dbContext, scopeServiceProvider, KnownPlantData.PlantA);
-                    SeedDataForPlant(dbContext, scopeServiceProvider, KnownPlantData.PlantB);
-                }
+                dbContext.Database.Migrate();
             }
+
+            SeedDataForPlant(dbContext, scopeServiceProvider, KnownPlantData.PlantA);
+            SeedDataForPlant(dbContext, scopeServiceProvider, KnownPlantData.PlantB);
         }
 
         private void SeedDataForPlant(ApplicationContext dbContext, IServiceProvider scopeServiceProvider, string plant)
@@ -219,10 +215,8 @@ namespace Equinor.Lighthouse.Api.WebApi.IntegrationTests
         private void EnsureTestDatabaseDeletedAtTeardown(IServiceCollection services)
             => _teardownList.Add(() =>
             {
-                using (var dbContext = DatabaseContext(services))
-                {
-                    dbContext.Database.EnsureDeleted();
-                }
+                using var dbContext = DatabaseContext(services);
+                dbContext.Database.EnsureDeleted();
             });
 
         private ApplicationContext DatabaseContext(IServiceCollection services)

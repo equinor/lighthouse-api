@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 
-namespace Equinor.Lighthouse.Api.WebApi.Authorizations
+namespace Equinor.Lighthouse.Api.WebApi.Authorizations;
+
+public interface IAccessValidator
 {
-    public interface IAccessValidator
-    {
-        Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest: IBaseRequest;
-    }
+    Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest: IBaseRequest;
 }

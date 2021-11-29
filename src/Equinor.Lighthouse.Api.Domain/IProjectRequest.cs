@@ -1,7 +1,6 @@
-﻿namespace Equinor.Lighthouse.Api.Domain
+﻿namespace Equinor.Lighthouse.Api.Domain;
+
+public interface IProjectRequest
 {
-    public interface IProjectRequest
-    {
-        string ProjectName { get; }
-    }
+    string ProjectName { get; }
 }

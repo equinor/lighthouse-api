@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate
-{
-   public class Activity : PlantEntityBase, IAggregateRoot
+namespace Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate;
+
+public class Activity : PlantEntityBase, IAggregateRoot
 {
     public Activity(string plant) : base(plant)
     {
@@ -99,7 +99,4 @@ namespace Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate
     public DateTime? Bef { get; set; }
     public double? Rsh { get; set; }
     public double? Csh { get; set; }
-
- 
-}
 }

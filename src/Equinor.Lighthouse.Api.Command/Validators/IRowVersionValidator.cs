@@ -1,7 +1,6 @@
-﻿namespace Equinor.Lighthouse.Api.Command.Validators
+﻿namespace Equinor.Lighthouse.Api.Command.Validators;
+
+public interface IRowVersionValidator
 {
-    public interface IRowVersionValidator
-    {
-        bool IsValid(string rowVersion);
-    }
+    bool IsValid(string rowVersion);
 }

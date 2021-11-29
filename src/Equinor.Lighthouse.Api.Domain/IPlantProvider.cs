@@ -1,8 +1,7 @@
-﻿namespace Equinor.Lighthouse.Api.Domain
+﻿namespace Equinor.Lighthouse.Api.Domain;
+
+public interface IPlantProvider
 {
-    public interface IPlantProvider
-    {
-        string Plant { get; }
-        bool IsCrossPlantQuery { get; }
-    }
+    string Plant { get; }
+    bool IsCrossPlantQuery { get; }
 }

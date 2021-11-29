@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.MainApi.Area
+namespace Equinor.Lighthouse.Api.MainApi.Area;
+
+public interface IAreaApiService
 {
-    public interface IAreaApiService
-    {
-        Task<PCSArea> TryGetAreaAsync(string plant, string code);
-    }
+    Task<PCSArea> TryGetAreaAsync(string plant, string code);
 }

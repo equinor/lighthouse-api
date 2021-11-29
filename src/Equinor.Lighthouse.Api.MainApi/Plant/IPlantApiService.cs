@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.MainApi.Plant
+namespace Equinor.Lighthouse.Api.MainApi.Plant;
+
+public interface IPlantApiService
 {
-    public interface IPlantApiService
-    {
-        Task<List<PCSPlant>> GetAllPlantsForUserAsync(Guid azureOid);
-    }
+    Task<List<PCSPlant>> GetAllPlantsForUserAsync(Guid azureOid);
 }

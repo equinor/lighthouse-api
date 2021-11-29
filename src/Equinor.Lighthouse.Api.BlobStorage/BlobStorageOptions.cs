@@ -1,11 +1,10 @@
-﻿namespace Equinor.Lighthouse.Api.BlobStorage
+﻿namespace Equinor.Lighthouse.Api.BlobStorage;
+
+public class BlobStorageOptions
 {
-    public class BlobStorageOptions
-    {
-        public string ConnectionString { get; set; }
-        public int MaxSizeMb { get; set; }
-        public string BlobContainer { get; set; }
-        public int BlobClockSkewMinutes { get; set; }
-        public string[] BlockedFileSuffixes { get; set; }
-    }
+    public string ConnectionString { get; set; }
+    public int MaxSizeMb { get; set; }
+    public string BlobContainer { get; set; }
+    public int BlobClockSkewMinutes { get; set; }
+    public string[] BlockedFileSuffixes { get; set; }
 }

@@ -1,8 +1,7 @@
-﻿namespace Equinor.Lighthouse.Api.WebApi.Authorizations
+﻿namespace Equinor.Lighthouse.Api.WebApi.Authorizations;
+
+public interface IContentRestrictionsChecker
 {
-    public interface IContentRestrictionsChecker
-    {
-        bool HasCurrentUserExplicitNoRestrictions();
-        bool HasCurrentUserExplicitAccessToContent(string responsibleCode);
-    }
+    bool HasCurrentUserExplicitNoRestrictions();
+    bool HasCurrentUserExplicitAccessToContent(string responsibleCode);
 }

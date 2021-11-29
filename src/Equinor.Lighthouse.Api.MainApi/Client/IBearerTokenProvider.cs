@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.MainApi.Client
+namespace Equinor.Lighthouse.Api.MainApi.Client;
+
+public interface IBearerTokenProvider
 {
-    public interface IBearerTokenProvider
-    {
-        ValueTask<string> GetBearerTokenAsync();
-    }
+    ValueTask<string> GetBearerTokenAsync();
 }

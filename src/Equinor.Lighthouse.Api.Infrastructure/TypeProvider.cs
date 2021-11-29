@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Equinor.Lighthouse.Api.Infrastructure
+namespace Equinor.Lighthouse.Api.Infrastructure;
+
+public static class TypeProvider
 {
-    public static class TypeProvider
+    private static List<Type> _entityTypeCache;
+
+    public static List<Type> GetEntityTypes(Assembly assembly, Type baseType)
     {
-        private static List<Type> _entityTypeCache;
-
-        public static List<Type> GetEntityTypes(Assembly assembly, Type baseType)
+        if (_entityTypeCache != null)
         {
-            if (_entityTypeCache != null)
-            {
-                return _entityTypeCache;
-            }
-
-            _entityTypeCache = (from t in assembly.DefinedTypes
-                                where t.BaseType == baseType
-                                select t.AsType()).ToList();
-
             return _entityTypeCache;
         }
+
+        _entityTypeCache = (from t in assembly.DefinedTypes
+            where t.BaseType == baseType
+            select t.AsType()).ToList();
+
+        return _entityTypeCache;
     }
 }

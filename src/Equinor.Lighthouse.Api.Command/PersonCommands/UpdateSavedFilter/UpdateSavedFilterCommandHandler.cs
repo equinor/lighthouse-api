@@ -6,50 +6,49 @@ using Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Lighthouse.Api.Command.PersonCommands.UpdateSavedFilter
+namespace Equinor.Lighthouse.Api.Command.PersonCommands.UpdateSavedFilter;
+
+public class UpdateSavedFilterCommandHandler : IRequestHandler<UpdateSavedFilterCommand, Result<string>>
 {
-    public class UpdateSavedFilterCommandHandler : IRequestHandler<UpdateSavedFilterCommand, Result<string>>
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ICurrentUserProvider _currentUserProvider;
+    private readonly IPersonRepository _personRepository;
+
+    public UpdateSavedFilterCommandHandler(
+        IUnitOfWork unitOfWork,
+        ICurrentUserProvider currentUserProvider,
+        IPersonRepository personRepository)
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly IPersonRepository _personRepository;
+        _unitOfWork = unitOfWork;
+        _currentUserProvider = currentUserProvider;
+        _personRepository = personRepository;
+    }
 
-        public UpdateSavedFilterCommandHandler(
-            IUnitOfWork unitOfWork,
-            ICurrentUserProvider currentUserProvider,
-            IPersonRepository personRepository)
+    public async Task<Result<string>> Handle(UpdateSavedFilterCommand request, CancellationToken cancellationToken)
+    {
+        var currentUserOid = _currentUserProvider.GetCurrentUserOid();
+        var person = await _personRepository.GetWithSavedFiltersByOidAsync(currentUserOid);
+        var savedFilter = person.SavedFilters.Single(sf => sf.Id == request.SavedFilterId);
+
+        if (request.DefaultFilter == true)
         {
-            _unitOfWork = unitOfWork;
-            _currentUserProvider = currentUserProvider;
-            _personRepository = personRepository;
+            var currentDefaultFiler = person.GetDefaultFilter(savedFilter.ProjectId);
+            if (currentDefaultFiler != null)
+            {
+                currentDefaultFiler.DefaultFilter = false;
+            }
         }
 
-        public async Task<Result<string>> Handle(UpdateSavedFilterCommand request, CancellationToken cancellationToken)
+        savedFilter.Title = request.Title;
+        savedFilter.Criteria = request.Criteria;
+        if (request.DefaultFilter.HasValue)
         {
-            var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var person = await _personRepository.GetWithSavedFiltersByOidAsync(currentUserOid);
-            var savedFilter = person.SavedFilters.Single(sf => sf.Id == request.SavedFilterId);
-
-            if (request.DefaultFilter == true)
-            {
-                var currentDefaultFiler = person.GetDefaultFilter(savedFilter.ProjectId);
-                if (currentDefaultFiler != null)
-                {
-                    currentDefaultFiler.DefaultFilter = false;
-                }
-            }
-
-            savedFilter.Title = request.Title;
-            savedFilter.Criteria = request.Criteria;
-            if (request.DefaultFilter.HasValue)
-            {
-                savedFilter.DefaultFilter = request.DefaultFilter.Value;
-            }
-            savedFilter.SetRowVersion(request.RowVersion);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return new SuccessResult<string>(savedFilter.RowVersion.ConvertToString());
+            savedFilter.DefaultFilter = request.DefaultFilter.Value;
         }
+        savedFilter.SetRowVersion(request.RowVersion);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return new SuccessResult<string>(savedFilter.RowVersion.ConvertToString());
     }
 }

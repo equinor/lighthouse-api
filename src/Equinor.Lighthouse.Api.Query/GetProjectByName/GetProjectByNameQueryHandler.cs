@@ -7,32 +7,31 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Lighthouse.Api.Query.GetProjectByName
+namespace Equinor.Lighthouse.Api.Query.GetProjectByName;
+
+public class GetProjectByNameQueryHandler : IRequestHandler<GetProjectByNameQuery, Result<ProjectDetailsDto>>
 {
-    public class GetProjectByNameQueryHandler : IRequestHandler<GetProjectByNameQuery, Result<ProjectDetailsDto>>
+    private readonly IReadOnlyContext _context;
+
+    public GetProjectByNameQueryHandler(IReadOnlyContext context) => _context = context;
+
+    public async Task<Result<ProjectDetailsDto>> Handle(GetProjectByNameQuery request, CancellationToken cancellationToken)
     {
-        private readonly IReadOnlyContext _context;
-
-        public GetProjectByNameQueryHandler(IReadOnlyContext context) => _context = context;
-
-        public async Task<Result<ProjectDetailsDto>> Handle(GetProjectByNameQuery request, CancellationToken cancellationToken)
-        {
-            var project = await (from p in _context.QuerySet<Project>()
-                where p.Name == request.ProjectName
-                select p).SingleOrDefaultAsync(cancellationToken);
+        var project = await (from p in _context.QuerySet<Project>()
+            where p.Name == request.ProjectName
+            select p).SingleOrDefaultAsync(cancellationToken);
             
-            if (project == null)
-            {
-                return new NotFoundResult<ProjectDetailsDto>(Strings.EntityNotFound(nameof(Project), request.ProjectName));
-            }
-
-            var projectDto = new ProjectDetailsDto(
-                project.Id,
-                project.Name,
-                project.Description,
-                project.IsClosed);
-
-            return new SuccessResult<ProjectDetailsDto>(projectDto);
+        if (project == null)
+        {
+            return new NotFoundResult<ProjectDetailsDto>(Strings.EntityNotFound(nameof(Project), request.ProjectName));
         }
+
+        var projectDto = new ProjectDetailsDto(
+            project.Id,
+            project.Name,
+            project.Description,
+            project.IsClosed);
+
+        return new SuccessResult<ProjectDetailsDto>(projectDto);
     }
 }

@@ -7,55 +7,54 @@ using Equinor.Lighthouse.Api.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Lighthouse.Api.Command.PersonCommands.CreateSavedFilter
+namespace Equinor.Lighthouse.Api.Command.PersonCommands.CreateSavedFilter;
+
+public class CreateSavedFilterCommandHandler : IRequestHandler<CreateSavedFilterCommand, Result<Guid>>
 {
-    public class CreateSavedFilterCommandHandler : IRequestHandler<CreateSavedFilterCommand, Result<Guid>>
+    private readonly IPersonRepository _personRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IPlantProvider _plantProvider;
+    private readonly ICurrentUserProvider _currentUserProvider;
+    private readonly IProjectRepository _projectRepository;
+
+    public CreateSavedFilterCommandHandler(
+        IPersonRepository personRepository,
+        IUnitOfWork unitOfWork,
+        IPlantProvider plantProvider,
+        ICurrentUserProvider currentUserProvider,
+        IProjectRepository projectRepository)
     {
-        private readonly IPersonRepository _personRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IPlantProvider _plantProvider;
-        private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly IProjectRepository _projectRepository;
+        _personRepository = personRepository;
+        _unitOfWork = unitOfWork;
+        _plantProvider = plantProvider;
+        _currentUserProvider = currentUserProvider;
+        _projectRepository = projectRepository;
+    }
 
-        public CreateSavedFilterCommandHandler(
-            IPersonRepository personRepository,
-            IUnitOfWork unitOfWork,
-            IPlantProvider plantProvider,
-            ICurrentUserProvider currentUserProvider,
-            IProjectRepository projectRepository)
+    public async Task<Result<Guid>> Handle(CreateSavedFilterCommand request, CancellationToken cancellationToken)
+    {
+        var currentUserOid = _currentUserProvider.GetCurrentUserOid();
+        var person = await _personRepository.GetWithSavedFiltersByOidAsync(currentUserOid);
+        var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
+
+        if (request.DefaultFilter)
         {
-            _personRepository = personRepository;
-            _unitOfWork = unitOfWork;
-            _plantProvider = plantProvider;
-            _currentUserProvider = currentUserProvider;
-            _projectRepository = projectRepository;
-        }
+            var currentDefaultFilter = person.GetDefaultFilter(project.Id);
 
-        public async Task<Result<Guid>> Handle(CreateSavedFilterCommand request, CancellationToken cancellationToken)
-        {
-            var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var person = await _personRepository.GetWithSavedFiltersByOidAsync(currentUserOid);
-            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-
-            if (request.DefaultFilter)
+            if (currentDefaultFilter != null)
             {
-                var currentDefaultFilter = person.GetDefaultFilter(project.Id);
-
-                if (currentDefaultFilter != null)
-                {
-                    currentDefaultFilter.DefaultFilter = false;
-                }
+                currentDefaultFilter.DefaultFilter = false;
             }
-
-            var savedFilter = new SavedFilter(_plantProvider.Plant, project, request.Title, request.Criteria)
-            {
-                DefaultFilter = request.DefaultFilter
-            };
-
-            person.AddSavedFilter(savedFilter);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return new SuccessResult<Guid>(savedFilter.Id);
         }
+
+        var savedFilter = new SavedFilter(_plantProvider.Plant, project, request.Title, request.Criteria)
+        {
+            DefaultFilter = request.DefaultFilter
+        };
+
+        person.AddSavedFilter(savedFilter);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        return new SuccessResult<Guid>(savedFilter.Id);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.MainApi.Discipline
+namespace Equinor.Lighthouse.Api.MainApi.Discipline;
+
+public interface IDisciplineApiService
 {
-    public interface IDisciplineApiService
-    {
-        Task<PCSDiscipline> TryGetDisciplineAsync(string plant, string code);
-    }
+    Task<PCSDiscipline> TryGetDisciplineAsync(string plant, string code);
 }

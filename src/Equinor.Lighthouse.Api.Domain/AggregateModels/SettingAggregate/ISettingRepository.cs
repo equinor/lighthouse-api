@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Lighthouse.Api.Domain.AggregateModels.SettingAggregate
+namespace Equinor.Lighthouse.Api.Domain.AggregateModels.SettingAggregate;
+
+public interface ISettingRepository : IRepository<Setting>
 {
-    public interface ISettingRepository : IRepository<Setting>
-    {
-        Task<Setting?> GetByCodeAsync(string settingCode);
-    }
+    Task<Setting?> GetByCodeAsync(string settingCode);
 }

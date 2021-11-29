@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 
-namespace Equinor.Lighthouse.Api.Domain
+namespace Equinor.Lighthouse.Api.Domain;
+
+public interface IReadOnlyContext
 {
-    public interface IReadOnlyContext
-    {
-        IQueryable<TEntity> QuerySet<TEntity>() where TEntity : class;
-    }
+    IQueryable<TEntity> QuerySet<TEntity>() where TEntity : class;
 }
