@@ -6,7 +6,7 @@ namespace Equinor.Lighthouse.Api.MainApi.Plant
     public class PCSPlant
     {
         public string Id { get; set; }
-        public string Title { get; set; }
+        public string? Title { get; set; }
         public bool HasAccess { get; set; }
     }
 }

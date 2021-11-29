@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using ServiceResult;
 
 namespace Equinor.Lighthouse.Api.Command.PersonCommands.UpdateSavedFilter
@@ -6,9 +7,9 @@ namespace Equinor.Lighthouse.Api.Command.PersonCommands.UpdateSavedFilter
     public class UpdateSavedFilterCommand : IRequest<Result<string>>
     {
         public UpdateSavedFilterCommand(
-            int savedFilterId,
-            string title,
-            string criteria,
+            Guid savedFilterId,
+            string? title,
+            string? criteria,
             bool? defaultFilter,
             string rowVersion)
         {
@@ -19,9 +20,9 @@ namespace Equinor.Lighthouse.Api.Command.PersonCommands.UpdateSavedFilter
             RowVersion = rowVersion;
         }
 
-        public int SavedFilterId { get; }
-        public string Title { get; }
-        public string Criteria { get; }
+        public Guid SavedFilterId { get; }
+        public string? Title { get; }
+        public string? Criteria { get; }
         public bool? DefaultFilter { get; }
         public string RowVersion { get; }
     }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Lighthouse.Api.Command.PersonCommands.DeleteSavedFilter;
 using Equinor.Lighthouse.Api.Domain;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate;
@@ -10,7 +11,7 @@ namespace Equinor.Lighthouse.Api.Command.Tests.PersonCommands.DeleteSavedFilter
     [TestClass]
     public class DeleteSavedFilterCommandHandlerTests : CommandHandlerTestsBase
     {
-        private int _savedFilterId = 1;
+        private readonly Guid _savedFilterId = new();
         
         private Mock<IPersonRepository> _personRepositoryMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;

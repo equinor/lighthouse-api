@@ -10,7 +10,7 @@ namespace Equinor.Lighthouse.Api.Command.Tests.MiscCommands.Clone
     {
         private readonly PlantProvider _plantProvider;
         private readonly List<T> _sourceItems;
-        protected readonly List<T> _targetItems = new List<T>();
+        protected readonly List<T> _targetItems = new();
         private readonly string _targetPlant;
 
         protected TestRepository(PlantProvider plantProvider, List<T> sourceModes)
@@ -41,9 +41,9 @@ namespace Equinor.Lighthouse.Api.Command.Tests.MiscCommands.Clone
             return Task.FromResult(_sourceItems);
         }
 
-        public Task<bool> Exists(int id) => throw new NotImplementedException();
-        public Task<T> GetByIdAsync(int id) => throw new NotImplementedException();
-        public Task<List<T>> GetByIdsAsync(IEnumerable<int> id) => throw new NotImplementedException();
+        public Task<bool> Exists(Guid id) => throw new NotImplementedException();
+        public Task<T> GetByIdAsync(Guid id) => throw new NotImplementedException();
+        public Task<List<T>> GetByIdsAsync(IEnumerable<Guid> id) => throw new NotImplementedException();
         public void Remove(T entity) => throw new NotImplementedException();
     }
 }

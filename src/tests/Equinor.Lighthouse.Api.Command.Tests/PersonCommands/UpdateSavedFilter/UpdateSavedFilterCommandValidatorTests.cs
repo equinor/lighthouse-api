@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Lighthouse.Api.Command.PersonCommands.UpdateSavedFilter;
 using Equinor.Lighthouse.Api.Command.Validators;
 using Equinor.Lighthouse.Api.Command.Validators.SavedFilterValidators;
@@ -16,7 +17,7 @@ namespace Equinor.Lighthouse.Api.Command.Tests.PersonCommands.UpdateSavedFilter
         private Mock<ISavedFilterValidator> _savedFilterValidatorMock;
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
 
-        private int _savedFilterId = 2;
+        private Guid _savedFilterId = new("2");
         private string _title = "Title";
         private string _criteria = "Criteria";
 

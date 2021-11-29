@@ -10,7 +10,7 @@ namespace Equinor.Lighthouse.Api.Infrastructure.Repositories
         {
         }
         
-        public Task<Responsible> GetByCodeAsync(string responsibleCode) 
+        public Task<Responsible?> GetByCodeAsync(string responsibleCode) 
             => DefaultQuery.SingleOrDefaultAsync(r => r.Code == responsibleCode);
     }
 }

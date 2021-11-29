@@ -1,8 +1,10 @@
-﻿namespace Equinor.Lighthouse.Api.Query.GetProjectByName
+﻿using System;
+
+namespace Equinor.Lighthouse.Api.Query.GetProjectByName
 {
     public class ProjectDetailsDto
     {
-        public ProjectDetailsDto(int id, string name, string description, bool isClosed)
+        public ProjectDetailsDto(Guid id, string name, string description, bool isClosed)
         {
             Id = id;
             Name = name;
@@ -10,7 +12,7 @@
             IsClosed = isClosed;
         }
 
-        public int Id { get; }
+        public Guid Id { get; }
         public string Name { get; }
         public string Description { get; }
         public bool IsClosed { get; }

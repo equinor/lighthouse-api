@@ -10,7 +10,7 @@ namespace Equinor.Lighthouse.Api.Domain.Audit
     public interface IModificationAuditable
     {
         DateTime? ModifiedAtUtc { get; }
-        int? ModifiedById { get; }
+        Guid? ModifiedById { get; }
 
         /// <summary>
         /// Method to set modification data on an entity.

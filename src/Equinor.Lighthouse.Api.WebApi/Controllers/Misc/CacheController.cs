@@ -95,7 +95,7 @@ namespace Equinor.Lighthouse.Api.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("PlantsFromCache")]
-        public async Task<IList<string>> GetPlantsFromCache()
+        public async Task<IList<string>?> GetPlantsFromCache()
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             var plants = await _plantCache.GetPlantIdsWithAccessForUserAsync(currentUserOid);

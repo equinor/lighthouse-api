@@ -13,7 +13,7 @@ namespace Equinor.Lighthouse.Api.Domain
 
         public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly() ?? (_domainEvents = new List<INotification>()).AsReadOnly();
 
-        public virtual int Id { get; protected set; }
+        public virtual Guid Id { get; protected set; }
 
         public readonly byte[] RowVersion = new byte[8];
 

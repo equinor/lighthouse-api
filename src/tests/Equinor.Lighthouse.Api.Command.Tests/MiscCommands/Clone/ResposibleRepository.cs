@@ -14,6 +14,6 @@ namespace Equinor.Lighthouse.Api.Command.Tests.MiscCommands.Clone
         {
         }
 
-        public Task<Responsible> GetByCodeAsync(string responsibleCode) => throw new NotImplementedException();
+        public Task<Responsible?> GetByCodeAsync(string responsibleCode) => throw new NotImplementedException();
     }
 }

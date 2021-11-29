@@ -1,14 +1,15 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using ServiceResult;
 
 namespace Equinor.Lighthouse.Api.Command.PersonCommands.CreateSavedFilter
 {
-    public class CreateSavedFilterCommand : IRequest<Result<int>>
+    public class CreateSavedFilterCommand : IRequest<Result<Guid>>
     {
         public CreateSavedFilterCommand(
             string projectName,
-            string title,
-            string criteria,
+            string? title,
+            string? criteria,
             bool defaultFilter)
         {
             ProjectName = projectName;
@@ -18,8 +19,8 @@ namespace Equinor.Lighthouse.Api.Command.PersonCommands.CreateSavedFilter
         }
 
         public string ProjectName { get; }
-        public string Title { get; }
-        public string Criteria { get; }
+        public string? Title { get; }
+        public string? Criteria { get; }
         public bool DefaultFilter { get; }
     }
 }

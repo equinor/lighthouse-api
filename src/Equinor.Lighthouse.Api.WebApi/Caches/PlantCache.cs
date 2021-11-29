@@ -28,7 +28,7 @@ namespace Equinor.Lighthouse.Api.WebApi.Caches
             _options = options;
         }
 
-        public async Task<IList<string>> GetPlantIdsWithAccessForUserAsync(Guid userOid)
+        public async Task<IList<string>?> GetPlantIdsWithAccessForUserAsync(Guid userOid)
         {
             var allPlants = await GetAllPlantsForUserAsync(userOid);
             return allPlants?.Where(p => p.HasAccess).Select(p => p.Id).ToList();
@@ -54,7 +54,7 @@ namespace Equinor.Lighthouse.Api.WebApi.Caches
             return allPlants != null && allPlants.Any(p => p.Id == plantId);
         }
 
-        public async Task<string> GetPlantTitleAsync(string plantId)
+        public async Task<string?> GetPlantTitleAsync(string plantId)
         {
             var userOid = _currentUserProvider.GetCurrentUserOid();
             var allPlants = await GetAllPlantsForUserAsync(userOid);

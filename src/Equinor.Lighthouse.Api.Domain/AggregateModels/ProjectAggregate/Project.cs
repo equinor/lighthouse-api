@@ -28,9 +28,9 @@ namespace Equinor.Lighthouse.Api.Domain.AggregateModels.ProjectAggregate
         public string Description { get; set; }
         public bool IsClosed { get; set; }
         public DateTime CreatedAtUtc { get; private set; }
-        public int CreatedById { get; private set; }
+        public Guid? CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
-        public int? ModifiedById { get; private set; }
+        public Guid? ModifiedById { get; private set; }
 
 
         public void Close() => IsClosed = true;

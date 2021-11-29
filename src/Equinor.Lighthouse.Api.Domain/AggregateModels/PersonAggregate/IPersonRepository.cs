@@ -7,6 +7,6 @@ namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate
     {
         Task<Person> GetByOidAsync(Guid oid);
         Task<Person> GetWithSavedFiltersByOidAsync(Guid oid);
-        void RemoveSavedFilter(SavedFilter savedFilter);
+        void RemoveSavedFilter(SavedFilter? savedFilter);
     }
 }

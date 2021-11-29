@@ -27,9 +27,9 @@ namespace Equinor.Lighthouse.Api.Domain.AggregateModels.ResponsibleAggregate
         public bool IsVoided { get; set; }
 
         public DateTime CreatedAtUtc { get; private set; }
-        public int CreatedById { get; private set; }
+        public Guid? CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
-        public int? ModifiedById { get; private set; }
+        public Guid? ModifiedById { get; private set; }
 
         public void SetCreated(Person createdBy)
         {

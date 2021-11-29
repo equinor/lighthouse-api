@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Lighthouse.Api.Domain;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate;
@@ -8,7 +9,7 @@ using ServiceResult;
 
 namespace Equinor.Lighthouse.Api.Command.PersonCommands.CreateSavedFilter
 {
-    public class CreateSavedFilterCommandHandler : IRequestHandler<CreateSavedFilterCommand, Result<int>>
+    public class CreateSavedFilterCommandHandler : IRequestHandler<CreateSavedFilterCommand, Result<Guid>>
     {
         private readonly IPersonRepository _personRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -30,7 +31,7 @@ namespace Equinor.Lighthouse.Api.Command.PersonCommands.CreateSavedFilter
             _projectRepository = projectRepository;
         }
 
-        public async Task<Result<int>> Handle(CreateSavedFilterCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(CreateSavedFilterCommand request, CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             var person = await _personRepository.GetWithSavedFiltersByOidAsync(currentUserOid);
@@ -54,7 +55,7 @@ namespace Equinor.Lighthouse.Api.Command.PersonCommands.CreateSavedFilter
             person.AddSavedFilter(savedFilter);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return new SuccessResult<int>(savedFilter.Id);
+            return new SuccessResult<Guid>(savedFilter.Id);
         }
     }
 }

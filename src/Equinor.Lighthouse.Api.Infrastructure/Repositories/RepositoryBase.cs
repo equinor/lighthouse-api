@@ -28,16 +28,16 @@ namespace Equinor.Lighthouse.Api.Infrastructure.Repositories
         public virtual void Add(TEntity entity) =>
             Set.Add(entity);
 
-        public Task<bool> Exists(int id) =>
+        public Task<bool> Exists(Guid id) =>
             DefaultQuery.AnyAsync(x => x.Id == id);
 
         public virtual Task<List<TEntity>> GetAllAsync() =>
             DefaultQuery.ToListAsync();
 
-        public virtual Task<TEntity> GetByIdAsync(int id) =>
+        public virtual Task<TEntity> GetByIdAsync(Guid id) =>
             DefaultQuery.SingleOrDefaultAsync(x => x.Id == id);
 
-        public Task<List<TEntity>> GetByIdsAsync(IEnumerable<int> ids) =>
+        public Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids) =>
             DefaultQuery.Where(x => ids.Contains(x.Id)).ToListAsync();
 
         public virtual void Remove(TEntity entity)

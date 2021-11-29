@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Lighthouse.Api.Command.PersonCommands.DeleteSavedFilter;
 using Equinor.Lighthouse.Api.Command.Validators;
 using Equinor.Lighthouse.Api.Command.Validators.SavedFilterValidators;
@@ -15,7 +16,7 @@ namespace Equinor.Lighthouse.Api.Command.Tests.PersonCommands.DeleteSavedFilter
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private DeleteSavedFilterCommand _command;
 
-        private readonly int _savedFilterId = 1;
+        private readonly Guid _savedFilterId = new("1");
 
         [TestInitialize]
         public void Setup_OkState()

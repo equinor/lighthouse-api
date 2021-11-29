@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Lighthouse.Api.Command.PersonCommands.CreateSavedFilter;
@@ -49,9 +50,8 @@ namespace Equinor.Lighthouse.Api.WebApi.Controllers.Persons
         [HttpDelete("SavedFilters/{id}")]
         public async Task<ActionResult> DeleteSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
-            [Required]
-            string plant,
-            [FromRoute] int id,
+            [Required] string plant,
+            [FromRoute] Guid id,
             [FromBody] DeleteSavedFilterDto dto)
         {
             var result = await _mediator.Send(new DeleteSavedFilterCommand(id, dto.RowVersion));
@@ -62,9 +62,8 @@ namespace Equinor.Lighthouse.Api.WebApi.Controllers.Persons
         [HttpPut("SavedFilters/{id}")]
         public async Task<ActionResult> UpdateSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
-            [Required]
-            string plant,
-            [FromRoute] int id,
+            [Required] string plant,
+            [FromRoute] Guid id,
             [FromBody] UpdateSavedFilterDto dto)
         {
             var command = new UpdateSavedFilterCommand(

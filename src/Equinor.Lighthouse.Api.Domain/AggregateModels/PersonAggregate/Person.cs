@@ -11,25 +11,25 @@ namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate
         public const int FirstNameLengthMax = 64;
         public const int LastNameLengthMax = 64;
 
-        private readonly List<SavedFilter> _savedFilters = new List<SavedFilter>();
+        private readonly List<SavedFilter?> _savedFilters = new List<SavedFilter?>();
 
-        protected Person() : base()
+        protected Person()
         {
         }
 
-        public Person(Guid oid, string firstName, string lastName) : base()
+        public Person(Guid oid, string? firstName, string? lastName) : base()
         {
             Oid = oid;
             FirstName = firstName;
             LastName = lastName;
         }
 
-        public IReadOnlyCollection<SavedFilter> SavedFilters => _savedFilters.AsReadOnly();
+        public IReadOnlyCollection<SavedFilter?> SavedFilters => _savedFilters.AsReadOnly();
         public Guid Oid { get; private set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public DateTime? ModifiedAtUtc { get; private set; }
-        public int? ModifiedById { get; private set; }
+        public Guid? ModifiedById { get; private set; }
 
         public void SetModified(Person modifiedBy)
         {
@@ -41,7 +41,7 @@ namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate
             ModifiedById = modifiedBy.Id;
         }
 
-        public void AddSavedFilter(SavedFilter savedFilter)
+        public void AddSavedFilter(SavedFilter? savedFilter)
         {
             if (savedFilter == null)
             {
@@ -51,7 +51,7 @@ namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate
             _savedFilters.Add(savedFilter);
         }
 
-        public void RemoveSavedFilter(SavedFilter savedFilter)
+        public void RemoveSavedFilter(SavedFilter? savedFilter)
         {
             if (savedFilter == null)
             {
@@ -61,7 +61,7 @@ namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate
             _savedFilters.Remove(savedFilter);
         }
 
-        public SavedFilter GetDefaultFilter(int projectId) =>
+        public SavedFilter? GetDefaultFilter(Guid? projectId) =>
             _savedFilters.SingleOrDefault(s => s.ProjectId == projectId && s.DefaultFilter);
     }
 }

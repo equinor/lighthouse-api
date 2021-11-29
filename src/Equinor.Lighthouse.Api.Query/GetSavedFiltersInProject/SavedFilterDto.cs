@@ -5,9 +5,9 @@ namespace Equinor.Lighthouse.Api.Query.GetSavedFiltersInProject
     public class SavedFilterDto
     {
         public SavedFilterDto(
-            int id,
-            string title,
-            string criteria,
+            Guid id,
+            string? title,
+            string? criteria,
             bool defaultFilter,
             DateTime createdAtUtc,
             string rowVersion)
@@ -20,9 +20,9 @@ namespace Equinor.Lighthouse.Api.Query.GetSavedFiltersInProject
             RowVersion = rowVersion;
         }
 
-        public int Id { get; }
-        public string Title { get; }
-        public string Criteria { get; }
+        public Guid Id { get; }
+        public string? Title { get; }
+        public string? Criteria { get; }
         public bool DefaultFilter { get; }
         public DateTime CreatedAtUtc { get; }
         public string RowVersion { get; }
