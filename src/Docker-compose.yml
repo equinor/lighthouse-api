@@ -2,10 +2,10 @@ version: "3"
 
 services: 
   api:
-    container_name: preservationapi
-    image: preservationapi
+    container_name: lighthouseapi
+    image: lighthouseapi
     build:
       context: .
-      dockerfile: Equinor.ProCoSys.Preservation.WebApi/Dockerfile
+      dockerfile: Equinor.Lighthouse.Api.WebApi/Dockerfile
     ports:
       - "8080:5000"

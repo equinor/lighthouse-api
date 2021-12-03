@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.Lighthouse.Api.Command;
 using Equinor.Lighthouse.Api.Query;
 using Equinor.Lighthouse.Api.WebApi.DIModules;

@@ -11,7 +11,7 @@ public class Person : EntityBase, IAggregateRoot, IModificationAuditable
     public const int FirstNameLengthMax = 64;
     public const int LastNameLengthMax = 64;
 
-    private readonly List<SavedFilter?> _savedFilters = new List<SavedFilter?>();
+    private readonly List<SavedFilter?> _savedFilters = new();
 
     protected Person()
     {

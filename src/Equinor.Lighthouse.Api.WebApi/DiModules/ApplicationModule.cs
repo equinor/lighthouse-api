@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using Equinor.ProCoSys.PcsServiceBus.Receiver;
-using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
-using Equinor.Lighthouse.Api.BlobStorage;
+﻿using Equinor.Lighthouse.Api.BlobStorage;
 using Equinor.Lighthouse.Api.Command.EventHandlers;
 using Equinor.Lighthouse.Api.Command.Validators;
 using Equinor.Lighthouse.Api.Command.Validators.ProjectValidators;
@@ -52,7 +49,7 @@ public static class ApplicationModule
 
         services.AddDbContext<ApplicationContext>(options =>
         {
-            var connectionString = configuration.GetConnectionString("DevelopmentConnection"); //TODO
+            var connectionString = configuration.GetConnectionString("DefaultConnection"); //TODO
             options.UseSqlServer(connectionString);
         });
 
@@ -108,6 +105,5 @@ public static class ApplicationModule
 
         // Singleton - Created the first time they are requested
         services.AddSingleton<ICacheManager, CacheManager>();
-        services.AddSingleton<IBusReceiverServiceFactory, ScopedBusReceiverServiceFactory>();
     }
 }

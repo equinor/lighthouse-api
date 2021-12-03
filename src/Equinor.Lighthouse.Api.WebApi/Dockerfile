@@ -18,12 +18,6 @@ WORKDIR "/src/Equinor.Lighthouse.Api.WebApi"
 
 # Build
 ENV DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER=0
-ENV NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED true
-ARG FEED_ACCESSTOKEN
-RUN echo $FEED_ACCESSTOKEN
-ENV VSS_NUGET_EXTERNAL_FEED_ENDPOINTS="{\"endpointCredentials\": [{\"endpoint\":\"https://statoildeveloper.pkgs.visualstudio.com/_packaging/ProCoSysOfficial/nuget/v3/index.json\", \"username\":\"docker\", \"password\":\"${FEED_ACCESSTOKEN}\"}]}"
-RUN echo $VSS_NUGET_EXTERNAL_FEED_ENDPOINTS
-RUN wget -qO- https://raw.githubusercontent.com/Microsoft/artifacts-credprovider/master/helpers/installcredprovider.sh | bash
 RUN dotnet build "Equinor.Lighthouse.Api.WebApi.csproj" -c Release
 
 # Publish the application
@@ -35,9 +29,9 @@ RUN dotnet publish "Equinor.Lighthouse.Api.WebApi.csproj" -c Release --no-restor
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 
 # Install System.Drawing native dependencies (added because of Excel export (ClosedXML library) support).
-RUN apt-get update
-RUN apt-get install -y libc6 libgdiplus
-RUN rm -rf /var/lib/apt/lists/*
+#RUN apt-get update
+#RUN apt-get install -y libc6 libgdiplus
+#RUN rm -rf /var/lib/apt/lists/*
 
 # Create non-root user. Set ui to 9999 to avoid conflicts with host OS just in case
 RUN adduser --disabled-password --uid 9999 --gecos "" apprunner
