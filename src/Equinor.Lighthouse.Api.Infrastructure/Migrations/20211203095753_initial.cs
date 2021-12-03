@@ -5,34 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Equinor.Lighthouse.Api.Infrastructure.Migrations
 {
-    public partial class mergemigrations : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_WorkOrders_Id",
-                table: "WorkOrders");
-
-            migrationBuilder.DropIndex(
-                name: "IX_LciObjects_Id",
-                table: "LciObjects");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Activities_Id",
-                table: "Activities");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Plant",
-                table: "WorkOrders",
-                type: "nvarchar(max)",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "Plant",
-                table: "Activities",
-                type: "nvarchar(max)",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "Persons",
                 columns: table => new
@@ -247,32 +223,6 @@ namespace Equinor.Lighthouse.Api.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Persons");
-
-            migrationBuilder.DropColumn(
-                name: "Plant",
-                table: "WorkOrders");
-
-            migrationBuilder.DropColumn(
-                name: "Plant",
-                table: "Activities");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WorkOrders_Id",
-                table: "WorkOrders",
-                column: "Id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LciObjects_Id",
-                table: "LciObjects",
-                column: "Id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Activities_Id",
-                table: "Activities",
-                column: "Id",
-                unique: true);
         }
     }
 }

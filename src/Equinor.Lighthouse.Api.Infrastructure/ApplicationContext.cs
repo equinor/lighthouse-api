@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Lighthouse.Api.Domain;
-using Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ResponsibleAggregate;
@@ -46,9 +45,6 @@ public class ApplicationContext : DbContext, IUnitOfWork, IReadOnlyContext
     public virtual DbSet<Project> Projects { get; set; }
     public virtual DbSet<SavedFilter> SavedFilters { get; set; }
     public virtual DbSet<Setting> Settings { get; set; }
-    public virtual DbSet<Activity> Activities { get; set; }
-    public virtual DbSet<WorkOrder> WorkOrders { get; set; }
-    public virtual DbSet<LciObject> LciObjects { get; set; }
 
     private void SetGlobalPlantFilter(ModelBuilder modelBuilder)
     {

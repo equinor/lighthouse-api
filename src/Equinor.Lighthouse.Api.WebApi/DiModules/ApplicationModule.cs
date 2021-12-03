@@ -49,7 +49,7 @@ public static class ApplicationModule
 
         services.AddDbContext<ApplicationContext>(options =>
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection"); //TODO
+            var connectionString = configuration.GetConnectionString("LocalDb"); //TODO
             options.UseSqlServer(connectionString);
         });
 
