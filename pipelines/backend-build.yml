@@ -1,0 +1,68 @@
+trigger:
+  branches:
+    include:
+      - main
+      - dev
+
+resources:
+  repositories:
+    - repository: self
+    - repository: templates
+      type: github
+      name: equinor/lighthouse-infra
+      endpoint: 'equinor'
+      ref: infra/move
+
+# Global variables for the pipeline
+variables:
+  - template: /src/resources/construction-progress-api/construction-progress-api-variables.yml@templates
+  - template: /src/variables/global-variables.yml@templates
+
+  - name: 'repositoryName'
+    value: lighthouse-copr
+
+stages:
+  # build_stage stage. Docker build, tag and push
+  - stage: build
+    displayName: 'Docker - Build and Push'
+    variables:
+      envName: 'build'
+      containerRegistry: '${{ variables.containerRegistryName }}'
+      envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+      dockerfilePath: '/src/WebApi/Dockerfile'
+
+    jobs:
+      # Docker Build
+      - template: /src/resources/construction-progress-api/jobs/api-dockerbuild.yml@templates
+        parameters:
+          deploymentName: 'docker_build_push'
+          dependsOn: ''
+          envGroup: '${{ variables.envGroupName }}'
+          dockerfilePath: '${{ variables.dockerfilePath }}'
+          repository: '${{ variables.repositoryName }}'
+          dockerRegistryServiceConnection: '${{ variables.dockerRegistryServiceConnectionName }}'
+
+  # Deploy to dev environment
+  - stage: dev
+    displayName: 'Deploy to dev'
+    dependsOn: 'build'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+    variables:
+      envName: 'dev'
+      rgName: '${{ variables.envRgName }}'
+      envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+      serviceConnection: '${{ variables.nonProdServiceConnection }}'
+      containerRegistry: '${{ variables.containerRegistryName }}'
+
+    jobs:
+      # Deploy API
+      - template: /src/resources/construction-progress-api/jobs/api-deploy.yml@templates
+        parameters:
+          deploymentName: 'deploy_api'
+          dependsOn: ''
+          serviceConnection: '${{ variables.serviceConnection }}'
+          rgName: '${{variables.rgName}}'
+          envGroup: '${{ variables.envGroupName }}'
+          repository: '${{ variables.repositoryName }}'
+          containerRegistry: '${{ variables.containerRegistry }}'
+          appName: '${{ variables.appName }}'

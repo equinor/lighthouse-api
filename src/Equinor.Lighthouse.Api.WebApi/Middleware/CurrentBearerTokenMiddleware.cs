@@ -21,7 +21,7 @@ public class CurrentBearerTokenMiddleware
         var authorizationHeader = httpContextAccessor.HttpContext.Request.Headers["Authorization"];
         var tokens = authorizationHeader.ToString()?.Split(' ');
 
-        if (tokens != null && tokens.Length > 1)
+        if (tokens is { Length: > 1 })
         {
             var token = tokens[1];
             bearerTokenSetter.SetBearerToken(token);
