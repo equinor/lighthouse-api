@@ -29,7 +29,7 @@ stages:
       envName: 'build'
       containerRegistry: '${{ variables.containerRegistryName }}'
       envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-      dockerfilePath: '/src/WebApi/Dockerfile'
+      dockerfilePath: '/src/Equinor.Lighthouse.Api.WebApi/Dockerfile'
 
     jobs:
       # Docker Build
