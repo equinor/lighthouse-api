@@ -3,7 +3,7 @@ WORKDIR /src
 
 # Copy project files separately and restore NuGet packages to create layers. Skip test projects!
 #COPY ["src/Equinor.Lighthouse.Api.Command/*.csproj", "src/Equinor.Lighthouse.Api.Command/"]
-COPY Equinor.Lighthouse.Api.Command/*.csproj ./Equinor.Lighthouse.Api.Command/
+COPY ./Equinor.Lighthouse.Api.Command/*.csproj ./Equinor.Lighthouse.Api.Command/
 COPY Equinor.Lighthouse.Api.Domain/*.csproj ./Equinor.Lighthouse.Api.Domain/
 COPY Equinor.Lighthouse.Api.Infrastructure/*.csproj ./Equinor.Lighthouse.Api.Infrastructure/
 COPY Equinor.Lighthouse.Api.MainApi/*.csproj ./Equinor.Lighthouse.Api.MainApi/
