@@ -29,7 +29,7 @@ stages:
       envName: 'build'
       containerRegistry: '${{ variables.containerRegistryName }}'
       envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-      dockerfilePath: '/src/Equinor.Lighthouse.Api.WebApi/Dockerfile'
+      dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.Lighthouse.Api.WebApi/Dockerfile'
 
     jobs:
       # Docker Build
@@ -38,8 +38,8 @@ stages:
           deploymentName: 'docker_build_push'
           dependsOn: ''
           envGroup: '${{ variables.envGroupName }}'
-          buildContext: '$(Build.SourcesDirectory)/src'
           dockerfilePath: '${{ variables.dockerfilePath }}'
+          buildContext: '$(Build.SourcesDirectory)/src'
           repository: '${{ variables.repositoryName }}'
           dockerRegistryServiceConnection: '${{ variables.dockerRegistryServiceConnectionName }}'
 
