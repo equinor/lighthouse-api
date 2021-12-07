@@ -39,7 +39,7 @@ stages:
           dependsOn: ''
           envGroup: '${{ variables.envGroupName }}'
           dockerfilePath: '${{ variables.dockerfilePath }}'
-          buildContext: '/src'
+          buildContext: '$(Build.SourcesDirectory)/src'
           repository: '${{ variables.repositoryName }}'
           dockerRegistryServiceConnection: '${{ variables.dockerRegistryServiceConnectionName }}'
 
