@@ -39,7 +39,7 @@ public class VerifyPreservationApiClientExists : IHostedService
             scope.ServiceProvider
                 .GetRequiredService<ICurrentUserSetter>();
 
-        var oid = _options.Value.PreservationApiObjectId;
+        var oid = _options.Value.LighthouseApiObjectId;
         _logger.LogInformation($"Ensuring '{oid}' exists as Person");
         try
         {

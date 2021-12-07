@@ -22,7 +22,7 @@ public class Authenticator : IBearerTokenProvider, IBearerTokenSetter, IAuthenti
     {
         _options = options;
         _logger = logger;
-        var apiSecret = _options.Value.PreservationApiSecret;
+        var apiSecret = _options.Value.LighthouseApiSecret;
         _secretInfo = $"{apiSecret?[..2]}***{apiSecret?.Substring(apiSecret.Length - 1, 1)}";
         AuthenticationType = AuthenticationType.OnBehalfOf;
     }
@@ -88,10 +88,10 @@ public class Authenticator : IBearerTokenProvider, IBearerTokenSetter, IAuthenti
 
     private IConfidentialClientApplication CreateConfidentialPreservationClient()
     {
-        _logger.LogInformation($"Getting client using {_secretInfo} for {_options.Value.PreservationApiClientId}");
+        _logger.LogInformation($"Getting client using {_secretInfo} for {_options.Value.LighthouseApiClientId}");
         return ConfidentialClientApplicationBuilder
-            .Create(_options.Value.PreservationApiClientId)
-            .WithClientSecret(_options.Value.PreservationApiSecret)
+            .Create(_options.Value.LighthouseApiClientId)
+            .WithClientSecret(_options.Value.LighthouseApiSecret)
             .WithAuthority(new Uri(_options.Value.Instance))
             .Build();
     }

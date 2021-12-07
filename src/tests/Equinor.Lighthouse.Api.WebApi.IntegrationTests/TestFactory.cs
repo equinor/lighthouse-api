@@ -466,7 +466,7 @@ namespace Equinor.Lighthouse.Api.WebApi.IntegrationTests
         {
             var config = new ConfigurationBuilder().AddJsonFile(_configPath).Build();
 
-            var preservationApiObjectId = config["Authenticator:PreservationApiObjectId"];
+            var preservationApiObjectId = config["Authenticator:LighthouseApiObjectId"];
 
             _testUsers.Add(UserType.CrossPlantApp,
                 new TestUser
