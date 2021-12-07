@@ -38,6 +38,7 @@ stages:
           deploymentName: 'docker_build_push'
           dependsOn: ''
           envGroup: '${{ variables.envGroupName }}'
+          buildContext: '$(Build.SourcesDirectory)/src'
           dockerfilePath: '${{ variables.dockerfilePath }}'
           repository: '${{ variables.repositoryName }}'
           dockerRegistryServiceConnection: '${{ variables.dockerRegistryServiceConnectionName }}'
