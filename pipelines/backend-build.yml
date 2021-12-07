@@ -19,7 +19,7 @@ variables:
   - template: /src/variables/global-variables.yml@templates
 
   - name: 'repositoryName'
-    value: lighthouse-copr
+    value: lighthouse-api
 
 stages:
   # build_stage stage. Docker build, tag and push
