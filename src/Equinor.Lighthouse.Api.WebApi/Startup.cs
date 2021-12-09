@@ -102,7 +102,7 @@ public class Startup
         var scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCoSys Preservation API", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Lighthouse Construction Progress API", Version = "v1" });
 
             //Define the OAuth2.0 scheme that's in use (i.e. Implicit Flow)
             c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -167,7 +167,7 @@ public class Startup
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProCoSys Preservation API V1");
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lighthouse Construction Progress API");
             c.DocExpansion(DocExpansion.List);
             c.DisplayRequestDuration();
 
