@@ -172,7 +172,7 @@ public class Startup
             c.DisplayRequestDuration();
 
             c.OAuthClientId(Configuration["Swagger:ClientId"]);
-            c.OAuthAppName("ProCoSys Preservation API V1");
+            c.OAuthAppName("Lighthouse Construction API V1");
             c.OAuthScopeSeparator(" ");
             c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "resource", Configuration["API:Audience"] } });
         });
