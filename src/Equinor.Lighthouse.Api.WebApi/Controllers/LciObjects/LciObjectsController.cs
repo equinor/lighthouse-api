@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Lighthouse.Api.Query;
 using Equinor.Lighthouse.Api.Query.LciObjects;
+using Equinor.Lighthouse.Api.WebApi.Caches;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,13 +13,22 @@ namespace Equinor.Lighthouse.Api.WebApi.Controllers.LciObjects;
 [ApiController]
 public class LciObjectsController : ApiControllerBase
 {
+
+    private readonly IObjectsCache _objectsCache;
+
+    public LciObjectsController(IObjectsCache objectsCache)
+    {
+        _objectsCache = objectsCache;
+    }
+
     // GET: api/<LciObjectController>
     [Authorize]
+    //[AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<PaginatedList<LciObjectDto>>> Get([FromQuery] LciObjectsQuery query)
     {
-        return await Mediator.Send(query);
-      
+        var objects = await _objectsCache.GetObjects(() => Mediator.Send(query));
+        return objects;
     }
 
     //// GET api/<LciObjectsController>/5
@@ -29,3 +39,4 @@ public class LciObjectsController : ApiControllerBase
     //}
 
 }
+

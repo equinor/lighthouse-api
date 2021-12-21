@@ -1,4 +1,5 @@
-﻿using Equinor.Lighthouse.Api.BlobStorage;
+﻿using System.IO.Compression;
+using Equinor.Lighthouse.Api.BlobStorage;
 using Equinor.Lighthouse.Api.Command.EventHandlers;
 using Equinor.Lighthouse.Api.Command.Validators;
 using Equinor.Lighthouse.Api.Command.Validators.ProjectValidators;
@@ -32,6 +33,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Equinor.Lighthouse.Api.WebApi.Authentication;
 using Equinor.Lighthouse.Api.WebApi.Telemetry;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Equinor.Lighthouse.Api.WebApi.DIModules;
@@ -47,9 +50,17 @@ public static class ApplicationModule
         services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
         services.Configure<AuthenticatorOptions>(configuration.GetSection("Authenticator"));
 
+
+
         services.AddDbContext<ApplicationContext>(options =>
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection"); //TODO
+            options.UseSqlServer(connectionString);
+        });
+
+        services.AddDbContext<FAMContext>(options =>
+        {
+            var connectionString = configuration.GetConnectionString("FAM"); //TODO
             options.UseSqlServer(connectionString);
         });
 
@@ -58,6 +69,7 @@ public static class ApplicationModule
         // Transient - Created each time it is requested from the service container
 
         // Scoped - Created once per client request (connection)
+        services.AddScoped<IObjectsCache, ObjectsCache>();
         services.AddScoped<ITelemetryClient, ApplicationInsightsTelemetryClient>();
         services.AddScoped<IPersonCache, PersonCache>();
         services.AddScoped<IPlantCache, PlantCache>();

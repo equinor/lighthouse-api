@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -141,7 +143,15 @@ public class Startup
 
         services.AddResponseCompression(options =>
         {
+            var o = new GzipCompressionProviderOptions
+            {
+                Level = CompressionLevel.Optimal
+            };
+
+            options.Providers.Add(new GzipCompressionProvider(o));
+            options.Providers.Add<BrotliCompressionProvider>();
             options.EnableForHttps = true;
+
         });
 
         services.AddApplicationInsightsTelemetry();
@@ -155,6 +165,7 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        app.UseResponseCompression();
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -190,7 +201,7 @@ public class Startup
         app.UseVerifyOidInDb();
         app.UseAuthorization();
 
-        app.UseResponseCompression();
+        
 
         app.UseEndpoints(endpoints =>
         {
