@@ -32,6 +32,12 @@ public class McPkgQueryHandler : IRequestHandler<McPkgQuery, PaginatedList<McPkg
 
         //TODO synaps paging
         var list = await contextMscMcPkgs.ProjectTo<McPkgDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+
+        if (request.PageSize == 0 || request.PageSize > list.Count)
+        {
+            return new PaginatedList<McPkgDto>(list, list.Count,1 ,list.Count);
+        }
+
         var pagedList = list.Skip(request.PageSize * request.PageNumber).Take(request.PageSize).ToList();
         return new PaginatedList<McPkgDto>(pagedList, list.Count, request.PageNumber, request.PageSize);
     }
