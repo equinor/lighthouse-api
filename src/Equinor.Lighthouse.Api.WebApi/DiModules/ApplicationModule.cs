@@ -33,8 +33,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Equinor.Lighthouse.Api.WebApi.Authentication;
 using Equinor.Lighthouse.Api.WebApi.Telemetry;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.ResponseCompression;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Equinor.Lighthouse.Api.WebApi.DIModules;
