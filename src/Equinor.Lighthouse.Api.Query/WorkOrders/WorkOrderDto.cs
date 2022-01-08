@@ -30,10 +30,11 @@ public class WorkOrderDto : IMapFrom<WorkOrder>
     public string? JobStatusCode
     {
         get => _jobStatusCode;
-        set  {
-        _jobStatusCode = value;
+        set
+        {
+            _jobStatusCode = value;
 
-        JobStatusCutoffs = GetJobStatusCutoff(value);
+            JobStatusCutoffs = GetJobStatusCutoff(value);
         }
     }
 
@@ -45,13 +46,11 @@ public class WorkOrderDto : IMapFrom<WorkOrder>
     public string? CreatedAt { get; set; }
     public string? LastUpdated { get; set; }
 
-    public IEnumerable<JobStatusCutoff> JobStatusCutoffs { get; set; } 
+    public IEnumerable<JobStatusCutoff> JobStatusCutoffs { get; set; }
 
 
-    private static IEnumerable<JobStatusCutoff> GetJobStatusCutoff(string? status)
-    {
-      
-        return status switch
+    private static IEnumerable<JobStatusCutoff> GetJobStatusCutoff(string? status) =>
+        status switch
         {
             "W01" => new List<JobStatusCutoff>
             {
@@ -230,6 +229,5 @@ public class WorkOrderDto : IMapFrom<WorkOrder>
             _ => new List<JobStatusCutoff>()
 
         };
-    }
     //TODO static feeded list of statuses with weeks.
 }
