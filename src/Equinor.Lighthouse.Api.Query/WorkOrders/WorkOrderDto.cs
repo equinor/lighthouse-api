@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections.Generic;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate;
 using Equinor.Lighthouse.Api.Query.Mappings;
 
@@ -27,13 +25,12 @@ public class WorkOrderDto : IMapFrom<WorkOrder>
     public string? ResponsibleDescription { get; set; }
     public string? AreaCode { get; set; }
     public string? AreaDescription { get; set; }
-    public string? JobStatusCode
+    public string? JobStatusCode //TODO remove setter when datasource gives the values for jobstatuses.
     {
         get => _jobStatusCode;
         set
         {
             _jobStatusCode = value;
-
             JobStatusCutoffs = GetJobStatusCutoff(value);
         }
     }
@@ -46,7 +43,7 @@ public class WorkOrderDto : IMapFrom<WorkOrder>
     public string? CreatedAt { get; set; }
     public string? LastUpdated { get; set; }
 
-    public IEnumerable<JobStatusCutoff> JobStatusCutoffs { get; set; }
+    public IEnumerable<JobStatusCutoff> JobStatusCutoffs { get; set; } = new List<JobStatusCutoff>();
 
 
     private static IEnumerable<JobStatusCutoff> GetJobStatusCutoff(string? status) =>
@@ -225,9 +222,6 @@ public class WorkOrderDto : IMapFrom<WorkOrder>
                     Weeks = "12/07/2020,12/14/2020,12/21/2020,12/28/2020,01/04/2021,01/11/2021,01/18/2021,01/27/2021,02/01/2021,02/08/2021,02/15/2021,02/22/2021,03/01/2021,03/08/2021,03/15/2021,03/22/2021,03/29/2021,04/05/2021,04/12/2021,04/19/2021,04/26/2021,05/03/2021,05/10/2021,05/17/2021,05/24/2021,05/31/2021,06/07/2021,06/14/2021,06/21/2021,06/28/2021,07/05/2021,07/12/2021,07/19/2021,07/26/2021,08/02/2021,08/09/2021,08/16/2021,08/23/2021,08/30/2021,09/06/2021".Split(",").ToList()
                 }
             },
-
             _ => new List<JobStatusCutoff>()
-
         };
-    //TODO static feeded list of statuses with weeks.
 }
