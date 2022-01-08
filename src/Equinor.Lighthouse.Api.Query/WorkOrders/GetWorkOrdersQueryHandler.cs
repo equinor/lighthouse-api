@@ -5,17 +5,20 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Equinor.Lighthouse.Api.Domain;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate;
+using Equinor.Lighthouse.Api.Infrastructure;
 using Equinor.Lighthouse.Api.Query.Mappings;
+using Equinor.Lighthouse.Api.Query.McPkg;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Lighthouse.Api.Query.WorkOrders;
 
 public class GetWorkOrdersQueryHandler : IRequestHandler<GetWorkOrdersQuery, PaginatedList<WorkOrderDto>>
 {
-    private readonly IReadOnlyContext _context;
+    private readonly FAMContext _context;
     private readonly IMapper _mapper;
 
-    public GetWorkOrdersQueryHandler(IReadOnlyContext ctx, IMapper mapper)
+    public GetWorkOrdersQueryHandler(FAMContext ctx, IMapper mapper)
     {
         _context = ctx;
         _mapper = mapper;
@@ -24,13 +27,17 @@ public class GetWorkOrdersQueryHandler : IRequestHandler<GetWorkOrdersQuery, Pag
     public async Task<PaginatedList<WorkOrderDto>> Handle(GetWorkOrdersQuery request,
         CancellationToken cancellationToken)
     {
-        var contextWorkOrders = _context.QuerySet<WorkOrder>();
-        if (request.ActivityNo != null)
+        var contextMscMcPkgs = _context.WorkOrders.AsQueryable();
+
+        //TODO synaps paging
+        var list = await contextMscMcPkgs.ProjectTo<WorkOrderDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+
+        if (request.PageSize == 0 || request.PageSize > list.Count)
         {
-            contextWorkOrders = contextWorkOrders.Where(wo => wo.ActivityNo == request.ActivityNo);
+            return new PaginatedList<WorkOrderDto>(list, list.Count,1 ,list.Count);
         }
 
-        return await contextWorkOrders.ProjectTo<WorkOrderDto>(_mapper.ConfigurationProvider)
-            .PaginatedListAsync(request.PageNumber, request.PageSize);
+        var pagedList = list.Skip(request.PageSize * request.PageNumber).Take(request.PageSize).ToList();
+        return new PaginatedList<WorkOrderDto>(pagedList, list.Count, request.PageNumber, request.PageSize);
     }
 }

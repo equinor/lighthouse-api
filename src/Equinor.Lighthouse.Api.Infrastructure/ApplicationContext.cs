@@ -47,7 +47,7 @@ public class ApplicationContext : DbContext, IUnitOfWork, IReadOnlyContext
     public virtual DbSet<SavedFilter> SavedFilters { get; set; }
     public virtual DbSet<Setting> Settings { get; set; }
     public virtual DbSet<Activity> Activities { get; set; }
-    public virtual DbSet<WorkOrder> WorkOrders { get; set; }
+    //public virtual DbSet<WorkOrder> WorkOrders { get; set; }
     public virtual DbSet<LciObject> LciObjects { get; set; }
 
     private void SetGlobalPlantFilter(ModelBuilder modelBuilder)
