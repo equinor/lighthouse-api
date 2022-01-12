@@ -19,6 +19,7 @@ public class WorkOrdersController : ApiControllerBase
         return await Mediator.Send(query);
     }
 
+
     // GET <WorkOrdersController>/5
     [HttpGet("{id}")]
     public Task<WorkOrderDto> Get(Guid id) 

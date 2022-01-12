@@ -22,7 +22,7 @@ public class GetWorkOrderQueryHandler : IRequestHandler<GetWorkOrderQuery, WorkO
     public async Task<WorkOrderDto> Handle(GetWorkOrderQuery request, CancellationToken cancellationToken)
     {
         var workOrder = await _context.QuerySet<WorkOrder>()
-            .SingleOrDefaultAsync(wo => wo.Id == request.Id, cancellationToken);
+            .SingleOrDefaultAsync(wo => wo.WoNo == request.Id.ToString(), cancellationToken); //TODO ore remove
         return _mapper.Map<WorkOrderDto>(workOrder);
     }
 }

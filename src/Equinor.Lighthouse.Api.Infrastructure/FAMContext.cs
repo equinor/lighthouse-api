@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Equinor.Lighthouse.Api.Domain;
+using Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate;
 using Equinor.Lighthouse.Api.Domain.Events;
 using Equinor.Lighthouse.Api.Domain.FAMModels;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,8 @@ public class FAMContext : DbContext
 
     public virtual DbSet<McPkg> McPkgs { get; set; }
 
+    public virtual DbSet<WorkOrder> WorkOrders { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -39,6 +42,11 @@ public class FAMContext : DbContext
             {
                 eb.HasNoKey();
                 eb.ToView("Procosys_McPkg","Castberg");
+            })
+            .Entity<WorkOrder>(eb =>
+            {
+                eb.HasNoKey();
+                eb.ToView("Procosys_WorkOrder", "Castberg");
             });
 
 

@@ -6,5 +6,4 @@ public class GetWorkOrdersQuery : IRequest<PaginatedList<WorkOrderDto>>
 {
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 0;
-    public string? ActivityNo { get; set; }
 }
