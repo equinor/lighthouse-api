@@ -88,7 +88,7 @@ public class ApplicationContext : DbContext, IUnitOfWork, IReadOnlyContext
     {
         var entities = ChangeTracker
             .Entries<EntityBase>()
-            .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
+            .Where(x => x.Entity.DomainEvents.Any())
             .Select(x => x.Entity);
         await _eventDispatcher.DispatchAsync(entities, cancellationToken);
     }
