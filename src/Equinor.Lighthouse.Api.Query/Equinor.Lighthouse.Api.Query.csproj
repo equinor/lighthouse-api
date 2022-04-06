@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Equinor.Lighthouse.Api.MainApi\Equinor.Lighthouse.Api.MainApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Favorites\" />
+  </ItemGroup>
+
 </Project>

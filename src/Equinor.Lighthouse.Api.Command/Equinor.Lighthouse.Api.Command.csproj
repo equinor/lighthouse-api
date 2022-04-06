@@ -25,4 +25,10 @@
     <ProjectReference Include="..\Equinor.Lighthouse.Api.MainApi\Equinor.Lighthouse.Api.MainApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="FavoriteCommands\CreateFavorite\" />
+    <Folder Include="FavoriteCommands\DeleteFavorite\" />
+    <Folder Include="FavoriteCommands\UpdateFavorite\" />
+  </ItemGroup>
+
 </Project>
