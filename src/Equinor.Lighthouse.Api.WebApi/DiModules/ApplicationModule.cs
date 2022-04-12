@@ -93,6 +93,7 @@ public static class ApplicationModule
         services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
         services.AddScoped<IPersonRepository, PersonRepository>();
         services.AddScoped<ISettingRepository, SettingRepository>();
+        services.AddScoped<IWriteContext, ApplicationContext>();
 
         services.AddScoped<Authenticator>();
         services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<Authenticator>());

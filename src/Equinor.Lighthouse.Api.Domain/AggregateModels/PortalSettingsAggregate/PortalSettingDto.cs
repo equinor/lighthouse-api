@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate;
 
-namespace Equinor.Lighthouse.Api.Query.PortalSettings;
+namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate;
 
 public class PortalSettingDto
 {

@@ -1,11 +1,10 @@
 ﻿using System;
-using Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Lighthouse.Api.Query.PortalSettings;
 
-public class GetPortalSettingQuery : IRequest<Result<PortalSettingDto>>
+public class GetSimplePortalSettingQuery : IRequest<Result<PortalSettingSimpleDto>>
 {
     public Guid AzureOid { get; set; }
 }

@@ -6,6 +6,7 @@ using Equinor.Lighthouse.Api.Domain;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate;
+using Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.Favorite;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.SettingAggregate;
@@ -16,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Lighthouse.Api.Infrastructure;
 
-public class ApplicationContext : DbContext, IUnitOfWork, IReadOnlyContext
+public class ApplicationContext : DbContext, IUnitOfWork, IReadOnlyContext, IWriteContext 
 {
     private readonly IPlantProvider _plantProvider;
     private readonly IEventDispatcher _eventDispatcher;

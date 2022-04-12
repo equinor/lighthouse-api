@@ -11,7 +11,8 @@ namespace Equinor.Lighthouse.Api.Infrastructure.EntityConfigurations
             builder.HasKey(ps => ps.AzureOid);
 
             builder.HasMany(ps => ps.Favorites)
-                .WithOne();
+                .WithOne()
+                .HasForeignKey(f => f.AzureOid);
         }
     }
 }

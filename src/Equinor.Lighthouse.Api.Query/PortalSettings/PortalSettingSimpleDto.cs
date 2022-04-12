@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate;
+using MediatR;
 
 namespace Equinor.Lighthouse.Api.Query.PortalSettings;
 
-public class PortalSettingSimpleDto
+public class PortalSettingSimpleDto : IRequest
 {
     public Guid AzureOid { get; set; }
 

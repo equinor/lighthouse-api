@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate;
+namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.Favorite;
 
 public class Favorite
 {

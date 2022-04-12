@@ -4,16 +4,18 @@ using Equinor.Lighthouse.Api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrations
+namespace Equinor.Lighthouse.Api.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220406133047_portalSettings")]
+    partial class portalSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -498,9 +500,12 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
                     b.Property<string>("FavoriteName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("PortalSettingAzureOid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("FavoriteId");
 
-                    b.HasIndex("AzureOid");
+                    b.HasIndex("PortalSettingAzureOid");
 
                     b.ToTable("Favorites");
                 });
@@ -695,9 +700,7 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
                 {
                     b.HasOne("Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.PortalSetting", null)
                         .WithMany("Favorites")
-                        .HasForeignKey("AzureOid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PortalSettingAzureOid");
                 });
 
             modelBuilder.Entity("Equinor.Lighthouse.Api.Domain.AggregateModels.ProjectAggregate.Project", b =>

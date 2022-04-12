@@ -192,13 +192,13 @@ public class Startup
 
         app.UseRouting();
 
-        app.UseCurrentPlant();
-        app.UseCurrentBearerToken();
+        //app.UseCurrentPlant();
+        //app.UseCurrentBearerToken();
         app.UseAuthentication();
-        app.UseCurrentUser();
-        app.UsePersonValidator();
-        app.UsePlantValidator();
-        app.UseVerifyOidInDb();
+        //app.UseCurrentUser();
+        //app.UsePersonValidator();
+        //app.UsePlantValidator();
+        //app.UseVerifyOidInDb();
         app.UseAuthorization();
 
         
