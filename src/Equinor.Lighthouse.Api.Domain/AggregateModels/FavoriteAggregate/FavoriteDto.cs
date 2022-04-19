@@ -1,11 +1,11 @@
 ﻿
 using System;
 
-namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.Favorite;
+namespace Equinor.Lighthouse.Api.Domain.AggregateModels.FavoriteAggregate;
 
 public class FavoriteDto
 {
-    //public Guid FavoriteId { get; set; }
+    public Guid FavoriteId { get; set; }
 
     public Guid AzureOid { get; set; }
 

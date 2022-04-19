@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.Favorite;
+namespace Equinor.Lighthouse.Api.Domain.AggregateModels.FavoriteAggregate;
 
 public class Favorite
 {
@@ -13,7 +13,5 @@ public class Favorite
     public string? AppPreset { get; set; }
 
     public string? FavoriteName { get; set; }
-
-    //public Guid FilterId { get; set; }  
 
 }

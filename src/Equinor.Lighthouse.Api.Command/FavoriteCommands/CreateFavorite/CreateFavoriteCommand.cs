@@ -1,11 +1,24 @@
-﻿using Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.Favorite;
+﻿using System;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Lighthouse.Api.Command.FavoriteCommands.CreateFavorite;
 
-public class CreateFavoriteCommand : IRequest<Result<FavoriteDto>>
+public class CreateFavoriteCommand : IRequest<Result<Guid>>
 {
-    public FavoriteDto Favorite { get; }
-    public CreateFavoriteCommand(FavoriteDto dto) => Favorite = dto;
+    public Guid AzureOid { get; set; }
+
+    public string? AppId { get; set; }
+
+    public string? AppPreset { get; set; }
+
+    public string? FavoriteName { get; set; }
+    
+    public CreateFavoriteCommand(Guid azureOid,string? favoriteName, string? appPreset, string? appId)
+    {
+        FavoriteName = favoriteName;
+        AppPreset = appPreset;
+        AppId = appId;
+        AzureOid = azureOid;
+    }
 }

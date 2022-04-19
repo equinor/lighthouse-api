@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Equinor.Lighthouse.Api.Domain.AggregateModels.FavoriteAggregate;
 
 namespace Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate;
 

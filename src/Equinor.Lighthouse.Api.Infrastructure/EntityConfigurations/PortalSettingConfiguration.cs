@@ -10,9 +10,9 @@ namespace Equinor.Lighthouse.Api.Infrastructure.EntityConfigurations
         {
             builder.HasKey(ps => ps.AzureOid);
 
-            builder.HasMany(ps => ps.Favorites)
-                .WithOne()
-                .HasForeignKey(f => f.AzureOid);
+            //builder.HasMany(ps => ps.Favorites)
+            //    .WithOne()
+            //    .HasForeignKey(f => f.AzureOid);
         }
     }
 }

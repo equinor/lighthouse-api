@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Lighthouse.Api.Domain.AggregateModels.FavoriteAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate;
-using Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.Favorite;
 using Equinor.Lighthouse.Api.Infrastructure;
 using MediatR;
 using ServiceResult;
@@ -23,7 +23,7 @@ public class CreatePortalSettingCommandHandler : IRequestHandler<CreatePortalSet
     {
         var result =_context.Set<PortalSetting>().Add(new PortalSetting
         {
-            AzureOid = request.AzureOid, 
+            AzureOid = request.AzureOid,
             Favorites = new List<Favorite>()
         });
 
