@@ -17,7 +17,7 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -386,53 +386,6 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
                     b.ToTable("LciObjects");
                 });
 
-            modelBuilder.Entity("Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate.WorkOrder", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ActivityNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EstimatedEndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("EstimatedHours")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("EstimatedStartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("HoursUsed")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Plant")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Progress")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("StatusDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("WoNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("WorkOrders");
-                });
-
             modelBuilder.Entity("Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate.Person", b =>
                 {
                     b.Property<Guid>("Id")
@@ -525,6 +478,45 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
                     b.HasIndex("ProjectId");
 
                     b.ToTable("SavedFilters");
+                });
+
+            modelBuilder.Entity("Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.Favorite", b =>
+                {
+                    b.Property<Guid>("FavoriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AppId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AppPreset")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("AzureOid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FavoriteName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PortalSettingAzureOid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FavoriteId");
+
+                    b.HasIndex("PortalSettingAzureOid");
+
+                    b.ToTable("Favorites");
+                });
+
+            modelBuilder.Entity("Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.PortalSetting", b =>
+                {
+                    b.Property<Guid>("AzureOid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("AzureOid");
+
+                    b.ToTable("PortalSettings");
                 });
 
             modelBuilder.Entity("Equinor.Lighthouse.Api.Domain.AggregateModels.ProjectAggregate.Project", b =>
@@ -702,6 +694,13 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.Favorite", b =>
+                {
+                    b.HasOne("Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.PortalSetting", null)
+                        .WithMany("Favorites")
+                        .HasForeignKey("PortalSettingAzureOid");
+                });
+
             modelBuilder.Entity("Equinor.Lighthouse.Api.Domain.AggregateModels.ProjectAggregate.Project", b =>
                 {
                     b.HasOne("Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate.Person", null)
@@ -731,6 +730,11 @@ namespace lighthouse_construction_progress_api.Infrastructure.Persistence.Migrat
             modelBuilder.Entity("Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate.Person", b =>
                 {
                     b.Navigation("SavedFilters");
+                });
+
+            modelBuilder.Entity("Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate.PortalSetting", b =>
+                {
+                    b.Navigation("Favorites");
                 });
 #pragma warning restore 612, 618
         }

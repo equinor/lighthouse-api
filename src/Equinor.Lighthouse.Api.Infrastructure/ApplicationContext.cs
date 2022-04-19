@@ -4,7 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Lighthouse.Api.Domain;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ActivityAggregate;
+using Equinor.Lighthouse.Api.Domain.AggregateModels.FavoriteAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.PersonAggregate;
+using Equinor.Lighthouse.Api.Domain.AggregateModels.PortalSettingsAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Lighthouse.Api.Domain.AggregateModels.SettingAggregate;
@@ -15,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Lighthouse.Api.Infrastructure;
 
-public class ApplicationContext : DbContext, IUnitOfWork, IReadOnlyContext
+public class ApplicationContext : DbContext, IUnitOfWork, IReadOnlyContext, IWriteContext 
 {
     private readonly IPlantProvider _plantProvider;
     private readonly IEventDispatcher _eventDispatcher;
@@ -47,8 +49,11 @@ public class ApplicationContext : DbContext, IUnitOfWork, IReadOnlyContext
     public virtual DbSet<SavedFilter> SavedFilters { get; set; }
     public virtual DbSet<Setting> Settings { get; set; }
     public virtual DbSet<Activity> Activities { get; set; }
-    public virtual DbSet<WorkOrder> WorkOrders { get; set; }
+    //public virtual DbSet<WorkOrder> WorkOrders { get; set; }
     public virtual DbSet<LciObject> LciObjects { get; set; }
+
+    public virtual DbSet<PortalSetting> PortalSettings { get; set; }
+    public virtual DbSet<Favorite> Favorites { get; set; }
 
     private void SetGlobalPlantFilter(ModelBuilder modelBuilder)
     {
@@ -88,7 +93,7 @@ public class ApplicationContext : DbContext, IUnitOfWork, IReadOnlyContext
     {
         var entities = ChangeTracker
             .Entries<EntityBase>()
-            .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
+            .Where(x => x.Entity.DomainEvents.Any())
             .Select(x => x.Entity);
         await _eventDispatcher.DispatchAsync(entities, cancellationToken);
     }

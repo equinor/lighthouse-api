@@ -39,6 +39,7 @@ public class ClaimsTransformation : IClaimsTransformation
 
     public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
     {
+        return principal;
         _logger.LogInformation($"----- {GetType().Name} start");
         var userOid = principal.Claims.TryGetOid();
         if (!userOid.HasValue)

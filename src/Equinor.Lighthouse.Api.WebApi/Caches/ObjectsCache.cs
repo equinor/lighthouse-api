@@ -37,6 +37,6 @@ public class ObjectsCache : IObjectsCache
         return paginatedList;
     }
 
-    private string ObjectsCacheKey()
+    private static string ObjectsCacheKey()
         => $"OBJECTS_123";
 }

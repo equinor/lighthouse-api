@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Hosting;
 
 namespace Equinor.Lighthouse.Api.WebApi;
-
 public class Program
 {
     public static void Main(string[] args)
